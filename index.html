@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fear that sells, Companies that propagandize</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fear that sells, Companies that propagandize</h1>
+            <p class="subtitle">빨간색의 아이러니: 공포와 욕망 사이의 거리</p>
+        </header>
+
+        <div class="color-selector">
+            <div class="color-option" data-name="코카콜라" data-color="#ED1C16" style="background-color: #ED1C16;"></div>
+            <div class="color-option" data-name="소비에트 연방" data-color="#CD0000" style="background-color: #CD0000;"></div>
+            <div class="color-option" data-name="맥도날드" data-color="#DA291C" style="background-color: #DA291C;"></div>
+            <div class="color-option" data-name="중국 공산당" data-color="#DE2910" style="background-color: #DE2910;"></div>
+            <div class="color-option" data-name="YouTube" data-color="#FF0000" style="background-color: #FF0000;"></div>
+            <div class="color-option" data-name="북한" data-color="#ED1C27" style="background-color: #ED1C27;"></div>
+            <div class="color-option" data-name="Target" data-color="#CC0000" style="background-color: #CC0000;"></div>
+            <div class="color-option" data-name="Netflix" data-color="#E50914" style="background-color: #E50914;"></div>
+        </div>
+
+        <div class="visualization">
+            <div class="distance-line"></div>
+            <div class="origin-point" id="originPoint"></div>
+            <div id="colorNodes"></div>
+        </div>
+
+        <div class="tooltip" id="tooltip"></div>
+
+        <div class="results">
+            <h2>색상 거리 분석</h2>
+            <div class="closest-colors" id="closestColors"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

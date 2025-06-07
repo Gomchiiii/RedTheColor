@@ -1,0 +1,309 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* 배경 그라데이션 애니메이션 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%);
+    animation: pulse 10s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    background: linear-gradient(45deg, #dc2626, #991b1b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #9ca3af;
+    font-weight: 300;
+}
+
+.color-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5);
+}
+
+.color-option.selected {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.color-option::after {
+    content: attr(data-name);
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    color: #9ca3af;
+}
+
+.color-option:hover::after {
+    opacity: 1;
+}
+
+.visualization {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    margin-bottom: 40px;
+    background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.05) 0%, transparent 70%);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.distance-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    top: 50%;
+    left: 50px;
+    right: 50px;
+    transform: translateY(-50%);
+}
+
+.origin-point {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
+    animation: originPulse 2s ease-in-out infinite;
+    z-index: 10;
+}
+
+@keyframes originPulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2); }
+    50% { box-shadow: 0 0 60px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(255, 255, 255, 0.3); }
+}
+
+.color-node {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    animation: nodeAppear 0.6s forwards;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes nodeAppear {
+    to {
+        opacity: 1;
+    }
+}
+
+.color-node:hover {
+    transform: translateY(-50%) scale(1.2);
+    z-index: 20;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.color-node::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.color-node:hover::before {
+    opacity: 1;
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 250px;
+}
+
+.tooltip.show {
+    opacity: 1;
+}
+
+.tooltip h3 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tooltip p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #d1d5db;
+    line-height: 1.4;
+}
+
+.results {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.results h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.closest-colors {
+    display: grid;
+    gap: 15px;
+}
+
+.color-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+
+.color-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.color-info {
+    flex: 1;
+}
+
+.color-name {
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.color-distance {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.surprise-indicator {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #dc2626;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0;
+    animation: bounce 0.6s ease-out forwards;
+    animation-delay: 0.8s;
+}
+
+@keyframes bounce {
+    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    50% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
