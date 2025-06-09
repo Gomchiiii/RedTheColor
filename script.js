@@ -145,12 +145,114 @@ function getCurrentBreakpoint() {
     return 'desktop';
 }
 
-// 반응형 시각화 업데이트
+// 거리 구간 표시선 생성 (수정됨)
+function createDistanceIndicators(distances, breakpoint, config) {
+    const visualization = document.querySelector('.visualization');
+    
+    // 기존 세로 인디케이터 제거 (가로줄은 유지)
+    const existingIndicators = visualization.querySelectorAll('.vertical-indicator');
+    existingIndicators.forEach(indicator => indicator.remove());
+    
+    if (distances.length === 0) return;
+    
+    // 최대 거리 계산
+    const maxDistance = Math.max(...distances.map(d => d.distance));
+    const maxDisplayDistance = 442; // RGB 공간에서의 최대 거리
+    
+    // 구간 나누기 (1/3, 2/3 지점)
+    const closeThreshold = maxDistance / 3;
+    const mediumThreshold = (maxDistance * 2) / 3;
+    
+    const indicators = [
+        { 
+            distance: closeThreshold, 
+            color: '#ffffff',
+            opacity: 0.1
+        },
+        { 
+            distance: mediumThreshold, 
+            color: '#ffffff',
+            opacity: 0.1
+        }
+    ];
+    
+    indicators.forEach((indicator, index) => {
+        // 위치 계산 (기존 노드와 같은 로직)
+        const normalizedDistance = (indicator.distance / maxDisplayDistance) * 100;
+        const position = config.startPosition + (normalizedDistance * config.scale);
+        
+        // 화면을 벗어나지 않도록 제한
+        const maxPosition = window.innerWidth - 120;
+        const finalPosition = Math.min(position, maxPosition);
+        
+        // 세로선 생성 (!important 사용하여 강제 적용)
+        const line = document.createElement('div');
+        line.className = 'vertical-indicator';
+        line.style.cssText = `
+            position: absolute !important;
+            left: ${finalPosition}px !important;
+            top: 20% !important;
+            height: 60% !important;
+            width: 2px !important;
+            background: ${indicator.color} !important;
+            opacity: ${indicator.opacity} !important;
+            z-index: 5 !important;
+            border-radius: 1px !important;
+            animation: indicatorAppear 0.8s ease-out ${index * 0.2}s both !important;
+        `;
+        
+        visualization.appendChild(line);
+    });
+}
+
+// 반응형 시각화 업데이트 (수정됨)
 function updateVisualizationResponsive(selected) {
     const breakpoint = getCurrentBreakpoint();
     const originPoint = document.getElementById('originPoint');
     const colorNodes = document.getElementById('colorNodes');
     const closestColors = document.getElementById('closestColors');
+    const visualization = document.querySelector('.visualization');
+    
+    // 가로줄이 있는지 확인하고 없으면 생성
+    let horizontalLine = visualization.querySelector('.horizontal-line');
+    if (!horizontalLine) {
+        horizontalLine = document.createElement('div');
+        horizontalLine.className = 'horizontal-line';
+        horizontalLine.style.cssText = `
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+        `;
+        
+        // 브레이크포인트별 위치 설정
+        if (breakpoint === 'mobile') {
+            horizontalLine.style.left = '30px';
+            horizontalLine.style.right = '30px';
+        } else if (breakpoint === 'tablet') {
+            horizontalLine.style.left = '40px';
+            horizontalLine.style.right = '40px';
+        } else {
+            horizontalLine.style.left = '50px';
+            horizontalLine.style.right = '50px';
+        }
+        
+        visualization.appendChild(horizontalLine);
+    } else {
+        // 기존 가로줄 위치 업데이트
+        if (breakpoint === 'mobile') {
+            horizontalLine.style.left = '30px';
+            horizontalLine.style.right = '30px';
+        } else if (breakpoint === 'tablet') {
+            horizontalLine.style.left = '40px';
+            horizontalLine.style.right = '40px';
+        } else {
+            horizontalLine.style.left = '50px';
+            horizontalLine.style.right = '50px';
+        }
+    }
     
     originPoint.style.backgroundColor = selected.hex;
     colorNodes.innerHTML = '';
@@ -183,7 +285,14 @@ function updateVisualizationResponsive(selected) {
     };
     
     const config = configs[breakpoint];
+    
+    // 거리 표시선 생성
+    createDistanceIndicators(distances, breakpoint, config);
+    
     const displayColors = distances.slice(0, config.maxNodes);
+    
+    // 색상별 구간 분류
+    const classified = classifyColorsByDistance(distances);
     
     displayColors.forEach((color, index) => {
         const node = document.createElement('div');
@@ -199,7 +308,18 @@ function updateVisualizationResponsive(selected) {
         node.style.left = `${Math.min(position, window.innerWidth - 100)}px`;
         node.style.animationDelay = `${index * 0.1}s`;
         
-        node.dataset.colorData = JSON.stringify(color);
+        // 기본 박스 섀도우만 적용 (테두리 색상 제거)
+        node.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
+        
+        // 구간 정보만 데이터로 저장
+        let distanceCategory = 'far';
+        if (classified.close.includes(color)) {
+            distanceCategory = 'close';
+        } else if (classified.medium.includes(color)) {
+            distanceCategory = 'medium';
+        }
+        
+        node.dataset.colorData = JSON.stringify({...color, category: distanceCategory});
         
         // 터치 기기 감지
         const isTouchDevice = 'ontouchstart' in window;
@@ -227,38 +347,106 @@ function updateVisualizationResponsive(selected) {
         colorNodes.appendChild(node);
     });
     
+    // 결과 목록 업데이트 (구간별 색상 코딩 포함)
     const displayCount = breakpoint === 'mobile' ? 3 : 5;
-    closestColors.innerHTML = distances.slice(0, displayCount).map((color, index) => `
-        <div class="color-item">
-            <div class="color-preview" style="background-color: ${color.hex};"></div>
-            <div class="color-info">
-                <div class="color-name">${index + 1}. ${color.name}</div>
-                <div class="color-distance">
-                    거리: ${color.distance.toFixed(2)} | ${color.context}
+    closestColors.innerHTML = distances.slice(0, displayCount).map((color, index) => {
+        let categoryIcon = '';
+        let categoryColor = '#9ca3af';
+        
+        if (classified.close.includes(color)) {
+            categoryIcon = '🟢';
+            categoryColor = '#22c55e';
+        } else if (classified.medium.includes(color)) {
+            categoryIcon = '🟡';
+            categoryColor = '#f59e0b';
+        } else {
+            categoryIcon = '🔴';
+            categoryColor = '#ef4444';
+        }
+        
+        return `
+            <div class="color-item">
+                <div class="color-preview" style="background-color: ${color.hex};"></div>
+                <div class="color-info">
+                    <div class="color-name">${index + 1}. ${color.name}</div>
+                    <div class="color-distance">
+                        <span style="color: ${categoryColor};">${categoryIcon} 거리: ${color.distance.toFixed(2)}</span> | ${color.context}
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
-// 툴팁 표시
+// 향상된 툴팁 표시 (구간 정보 포함)
 function showTooltip(e, color) {
     const rect = e.target.getBoundingClientRect();
+    
+    // 구간 분류 정보 가져오기
+    const maxDistance = Math.max(...colors.filter(c => c.hex !== selectedColor.hex)
+        .map(c => colorDistance(selectedColor.hex, c.hex)));
+    const closeThreshold = maxDistance / 3;
+    const mediumThreshold = (maxDistance * 2) / 3;
+    
+    let categoryInfo = '';
+    if (color.distance <= closeThreshold) {
+        categoryInfo = '<div class="distance-category close">🟢 가까운 색상</div>';
+    } else if (color.distance <= mediumThreshold) {
+        categoryInfo = '<div class="distance-category medium">🟡 보통 거리</div>';
+    } else {
+        categoryInfo = '<div class="distance-category far">🔴 먼 색상</div>';
+    }
+    
     tooltip.innerHTML = `
         <h3>${color.name}</h3>
         <p>${color.description}</p>
         <p style="margin-top: 5px; font-size: 0.8rem;">거리: ${color.distance.toFixed(2)}</p>
+        ${categoryInfo}
     `;
     
-    tooltip.style.left = rect.left + rect.width / 2 + 'px';
+    // 툴팁 위치 조정 (화면 밖으로 나가지 않도록)
+    const tooltipWidth = 250; // 최대 너비
+    const viewportWidth = window.innerWidth;
+    const targetCenterX = rect.left + rect.width / 2;
+    
+    let leftPosition = targetCenterX;
+    let transform = 'translate(-50%, -100%)';
+    
+    // 화면 왼쪽 끝에 너무 가까우면
+    if (targetCenterX - tooltipWidth / 2 < 10) {
+        leftPosition = 10;
+        transform = 'translate(0, -100%)';
+    }
+    // 화면 오른쪽 끝에 너무 가까우면
+    else if (targetCenterX + tooltipWidth / 2 > viewportWidth - 10) {
+        leftPosition = viewportWidth - 10;
+        transform = 'translate(-100%, -100%)';
+    }
+    
+    tooltip.style.left = leftPosition + 'px';
     tooltip.style.top = rect.top - 10 + 'px';
-    tooltip.style.transform = 'translate(-50%, -100%)';
+    tooltip.style.transform = transform;
     tooltip.classList.add('show');
 }
 
 // 툴팁 숨기기
 function hideTooltip() {
     tooltip.classList.remove('show');
+}
+
+// 색상 구간별 분류 함수
+function classifyColorsByDistance(distances) {
+    if (distances.length === 0) return { close: [], medium: [], far: [] };
+    
+    const maxDistance = Math.max(...distances.map(d => d.distance));
+    const closeThreshold = maxDistance / 3;
+    const mediumThreshold = (maxDistance * 2) / 3;
+    
+    return {
+        close: distances.filter(d => d.distance <= closeThreshold),
+        medium: distances.filter(d => d.distance > closeThreshold && d.distance <= mediumThreshold),
+        far: distances.filter(d => d.distance > mediumThreshold)
+    };
 }
 
 // 카테고리별 필터링 (확장 기능)

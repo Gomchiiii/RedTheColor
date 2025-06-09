@@ -127,7 +127,7 @@ h1 {
     padding: 20px 10px;
 }
 
-.distance-line {
+.horizontal-line {
     position: absolute;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
@@ -135,6 +135,13 @@ h1 {
     left: 30px;
     right: 30px;
     transform: translateY(-50%);
+    z-index: 3;
+}
+
+/* 세로 구간선 (새로운 클래스) */
+.vertical-indicator {
+    pointer-events: none;
+    user-select: none;
 }
 
 .origin-point {
@@ -378,7 +385,7 @@ h1 {
         left: 40px;
     }
     
-    .distance-line {
+    .horizontal-line {
         left: 40px;
         right: 40px;
     }
@@ -463,7 +470,7 @@ h1 {
         left: 50px;
     }
     
-    .distance-line {
+    .horizontal-line {
         left: 50px;
         right: 50px;
     }
@@ -555,7 +562,7 @@ h1 {
         left: 20px;
     }
     
-    .distance-line {
+    .horizontal-line {
         left: 20px;
         right: 20px;
     }
@@ -682,4 +689,149 @@ h1 {
         -webkit-print-color-adjust: exact;
         color-adjust: exact;
     }
+}
+
+/* styles.css에 추가할 CSS */
+
+/* 거리 표시 인디케이터 애니메이션 */
+@keyframes indicatorAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateY(-5px) scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 거리 표시선 스타일 */
+.distance-indicator {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* .distance-line {
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        currentColor 10%, 
+        currentColor 90%, 
+        transparent 100%
+    ) !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+} */
+
+/* 거리 라벨 스타일 */
+.distance-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    backdrop-filter: blur(2px);
+}
+
+.distance-value {
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    letter-spacing: 0.05em;
+}
+
+/* 색상 노드 구간별 스타일 개선
+.color-node[data-category="close"] {
+    border: 2px solid rgba(34, 197, 94, 0.6);
+}
+
+.color-node[data-category="medium"] {
+    border: 2px solid rgba(245, 158, 11, 0.6);
+}
+
+.color-node[data-category="far"] {
+    border: 2px solid rgba(239, 68, 68, 0.6);
+} */
+
+/* 반응형 조정 */
+@media (max-width: 767px) {
+    .distance-label {
+        font-size: 0.65rem !important;
+        top: 8% !important;
+    }
+    
+    .distance-value {
+        font-size: 0.55rem !important;
+        top: 88% !important;
+    }
+    
+    /* .horizontal-line {
+        width: 1.5px !important;
+        top: 25% !important;
+        height: 50% !important;
+    } */
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .distance-label {
+        font-size: 0.75rem !important;
+    }
+    
+    .distance-value {
+        font-size: 0.65rem !important;
+    }
+}
+
+/* 고대비 모드에서의 거리 표시 */
+@media (prefers-contrast: high) {
+    .vertical-indicator {  /* horizontal-line → vertical-indicator */
+        width: 3px !important;
+        opacity: 1 !important;
+    }
+    
+    .distance-label,
+    .distance-value {
+        text-shadow: 0 0 3px rgba(0, 0, 0, 1) !important;
+        opacity: 1 !important;
+    }
+}
+
+/* 모션 감소 설정에서 애니메이션 비활성화 */
+@media (prefers-reduced-motion: reduce) {
+    .distance-indicator {
+        animation: none !important;
+    }
+}
+
+/* 툴팁에 구간 정보 추가를 위한 스타일 */
+.tooltip .distance-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 5px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.tooltip .distance-category.close {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+}
+
+.tooltip .distance-category.medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.tooltip .distance-category.far {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+/* 결과 섹션의 구간별 아이콘 스타일 개선 */
+.color-distance span {
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
 }
