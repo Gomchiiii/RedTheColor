@@ -703,3 +703,271 @@ function highlightSearchTerm(text, query) {
     const regex = new RegExp(`(${query})`, 'gi');
     return text.replace(regex, '<mark>$1</mark>');
 }
+
+// script.js에 추가할 색상 피커 기능
+
+// 색상 피커 초기화 (검색 기능 초기화 후에 호출)
+// script.js의 initializeColorPicker 함수를 이것으로 교체
+
+function initializeColorPicker() {
+    const container = document.querySelector('.container');
+    const colorSelector = container.querySelector('.color-selector');
+    
+    // 색상 피커 컨테이너 생성 (색상 상자 하나만)
+    const colorPickerContainer = document.createElement('div');
+    colorPickerContainer.className = 'color-picker-container';
+    colorPickerContainer.innerHTML = `
+        <div class="color-picker-wrapper">
+            <div class="color-picker-title">
+                <span class="picker-icon">🎨</span>
+                <span>원하는 색상으로 비교하기</span>
+            </div>
+            <div class="color-picker-info" id="pickerInfo">
+                색상을 선택하거나 HEX 코드를 입력하세요
+            </div>
+            <div class="color-picker-content">
+                <div class="color-input-wrapper">
+                    <input type="color" 
+                           id="colorPicker" 
+                           class="color-picker-input" 
+                           value="#FF0000">
+                </div>
+                <div class="color-info-inputs">
+                    <input type="text" 
+                           id="hexInput" 
+                           class="hex-input" 
+                           placeholder="#FF0000" 
+                           maxlength="7">
+                    <button id="compareButton" class="compare-button">
+                        <span class="button-icon">🔍</span>
+                        <span class="button-text">이 색상과 비교</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 색상 선택기 아래에 삽입
+    container.insertBefore(colorPickerContainer, colorSelector.nextSibling);
+    
+    // 이벤트 리스너 설정
+    setupColorPickerEvents();
+}
+
+// setupColorPickerEvents 함수도 수정 (colorDisplay 관련 제거)
+function setupColorPickerEvents() {
+    const colorPicker = document.getElementById('colorPicker');
+    const hexInput = document.getElementById('hexInput');
+    const compareButton = document.getElementById('compareButton');
+    //const pickerInfo = document.getElementById('pickerInfo');
+    
+    // 초기 HEX 값 설정
+    hexInput.value = colorPicker.value.toUpperCase();
+    
+    // 색상 피커 변경 이벤트
+    colorPicker.addEventListener('input', (e) => {
+        const color = e.target.value;
+        hexInput.value = color.toUpperCase();
+        //pickerInfo.textContent = `선택된 색상: ${color.toUpperCase()}`;
+    });
+    
+    // HEX 입력 필드 이벤트
+    hexInput.addEventListener('input', (e) => {
+        const hex = e.target.value;
+        if (isValidHex(hex)) {
+            colorPicker.value = hex;
+            pickerInfo.textContent = `입력된 색상: ${hex.toUpperCase()}`;
+        } else if (hex.length > 0) {
+            pickerInfo.textContent = "올바른 HEX 코드를 입력하세요 (예: #FF0000)";
+        }
+    });
+    
+    // HEX 입력 필드 포커스 아웃 시 검증
+    hexInput.addEventListener('blur', (e) => {
+        const hex = e.target.value;
+        if (hex && !isValidHex(hex)) {
+            e.target.value = colorPicker.value;
+            pickerInfo.textContent = `수정됨: ${colorPicker.value}`;
+        }
+    });
+    
+    // 비교 버튼 클릭 이벤트
+    compareButton.addEventListener('click', () => {
+        const selectedColor = colorPicker.value;
+        compareWithCustomColor(selectedColor);
+    });
+    
+    // Enter 키로 비교 실행
+    hexInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const hex = e.target.value;
+            if (isValidHex(hex)) {
+                compareWithCustomColor(hex);
+            }
+        }
+    });
+}
+
+// 색상 표시 업데이트
+function updateColorDisplay(color) {
+    const colorDisplay = document.getElementById('colorDisplay');
+    const hexInput = document.getElementById('hexInput');
+    
+    colorDisplay.style.backgroundColor = color;
+    if (!hexInput.matches(':focus')) {
+        hexInput.value = color.toUpperCase();
+    }
+}
+
+// HEX 색상 코드 유효성 검사
+function isValidHex(hex) {
+    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    return hexRegex.test(hex);
+}
+
+// 사용자 정의 색상과 비교
+function compareWithCustomColor(hexColor) {
+    const pickerInfo = document.getElementById('pickerInfo');
+    const compareButton = document.getElementById('compareButton');
+    
+    // 버튼 로딩 상태
+    compareButton.innerHTML = `
+        <span class="button-icon">⏳</span>
+        <span class="button-text">분석 중...</span>
+    `;
+    
+    // RGB 값 계산
+    const rgb = hexToRgb(hexColor);
+    if (!rgb) {
+        pickerInfo.textContent = "올바르지 않은 색상 코드입니다.";
+        resetCompareButton();
+        return;
+    }
+    
+    // 임시 색상 객체 생성
+    const customColor = {
+        name: `사용자 색상`,
+        hex: hexColor.toUpperCase(),
+        description: `RGB(${rgb.r}, ${rgb.g}, ${rgb.b})`,
+        context: '사용자 정의',
+        category: 'custom'
+    };
+    
+    // 기존 검색 초기화 (선택사항)
+    const searchInput = document.getElementById('colorSearch');
+    if (searchInput) {
+        searchInput.value = '';
+        const clearButton = document.getElementById('searchClear');
+        if (clearButton) clearButton.style.display = 'none';
+    }
+    
+    // 색상 선택기를 전체 데이터로 복원
+    filteredColors = [...allColors];
+    colors = [...allColors];
+    updateColorSelector(filteredColors);
+    
+    // 선택된 색상 설정 및 시각화
+    selectedColor = customColor;
+    
+    setTimeout(() => {
+        // 모든 색상 옵션 선택 해제
+        document.querySelectorAll('.color-option').forEach(opt => 
+            opt.classList.remove('selected')
+        );
+        
+        // 시각화 업데이트
+        updateVisualizationResponsive(customColor);
+        
+        // 정보 업데이트
+        const searchInfo = document.getElementById('searchInfo');
+        if (searchInfo) {
+            searchInfo.innerHTML = `사용자 색상 <span style="display:inline-block;width:20px;height:20px;background:${hexColor};border-radius:3px;vertical-align:middle;margin:0 5px;border:1px solid rgba(255,255,255,0.3);"></span> ${hexColor}와 비교 중`;
+        }
+        
+        pickerInfo.innerHTML = `분석 완료! <strong>${hexColor}</strong> 색상과 가장 유사한 색상들을 확인하세요.`;
+        
+        // 버튼 원래 상태로 복원
+        resetCompareButton();
+        
+        // 결과 영역으로 스크롤 (부드럽게)
+        const results = document.querySelector('.results');
+        if (results) {
+            results.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+        
+    }, 500);
+}
+
+// 비교 버튼 원래 상태로 복원
+function resetCompareButton() {
+    const compareButton = document.getElementById('compareButton');
+    compareButton.innerHTML = `
+        <span class="button-icon">🔍</span>
+        <span class="button-text">이 색상과 비교</span>
+    `;
+}
+
+// 기존 initializeSearch 함수 수정 - 색상 피커도 함께 초기화
+function initializeSearch() {
+    const container = document.querySelector('.container');
+    const header = container.querySelector('header');
+    const colorSelector = container.querySelector('.color-selector');
+    
+    // 검색 컨테이너 생성
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    searchContainer.innerHTML = `
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="colorSearch" 
+                   class="search-input" 
+                   placeholder="색상, 브랜드, 국가 또는 컨텍스트로 검색..."
+                   autocomplete="off">
+            <div class="search-icon">🔍</div>
+            <button class="search-clear" id="searchClear" style="display: none;">✕</button>
+        </div>
+        <div class="search-results-info" id="searchInfo">
+            총 ${allColors.length}개 색상
+        </div>
+    `;
+    
+    // 헤더와 색상 선택기 사이에 삽입
+    container.insertBefore(searchContainer, colorSelector);
+    
+    // 색상 피커도 함께 초기화
+    initializeColorPicker();
+    
+    // 검색 이벤트 리스너 (기존과 동일)
+    const searchInput = document.getElementById('colorSearch');
+    const clearButton = document.getElementById('searchClear');
+    const searchInfo = document.getElementById('searchInfo');
+    
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+        
+        clearButton.style.display = query ? 'flex' : 'none';
+        
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300);
+    });
+    
+    clearButton.addEventListener('click', () => {
+        searchInput.value = '';
+        clearButton.style.display = 'none';
+        performSearch('');
+        searchInput.focus();
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            performSearch(searchInput.value.trim());
+        }
+    });
+}

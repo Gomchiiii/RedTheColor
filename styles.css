@@ -1051,3 +1051,312 @@ h1 {
         background: rgba(255, 255, 255, 0.08);
     }
 }
+
+/* styles.css에 추가할 색상 피커 스타일 */
+
+/* 색상 피커 컨테이너 */
+/* 색상 피커 컨테이너 */
+.color-picker-container {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    animation: fadeIn 1s ease-out 0.5s both;
+}
+
+.color-picker-wrapper {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.color-picker-wrapper:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.color-picker-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.picker-icon {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.3));
+}
+
+.color-picker-content {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.color-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+/* 색상 피커 입력 - 더 크고 눈에 띄게 */
+.color-picker-input {
+    width: 70px;
+    height: 70px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.color-picker-input:hover {
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.color-picker-input:focus {
+    outline: 2px solid rgba(220, 38, 38, 0.6);
+    outline-offset: 2px;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.color-picker-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 12px;
+}
+
+.color-info-inputs {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex: 1;
+    min-width: 250px;
+}
+
+.hex-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #ffffff;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.9rem;
+    width: 120px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.hex-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+}
+
+.hex-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+}
+
+.compare-button {
+    background: linear-gradient(135deg, #000000, #000000);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(44, 44, 44, 0.3);
+}
+
+.compare-button:hover {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+}
+
+.compare-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+S
+.compare-button:focus {
+    outline: 2px solid rgba(0, 0, 0, 0.6);
+    outline-offset: 2px;
+}
+
+.button-icon {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.compare-button:hover .button-icon {
+    transform: scale(1.1);
+}
+
+.button-text {
+    white-space: nowrap;
+}
+
+.color-picker-info {
+    text-align: left;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 300;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+
+.color-picker-info strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* 반응형 색상 피커 */
+@media (max-width: 767px) {
+    .color-picker-container {
+        margin: 0 auto 30px;
+        padding: 0 10px;
+    }
+    
+    .color-picker-wrapper {
+        padding: 20px 15px;
+        border-radius: 15px;
+    }
+    
+    .color-picker-title {
+        font-size: 1rem;
+        margin-bottom: 1px;
+    }
+    
+    .picker-icon {
+        font-size: 1.2rem;
+    }
+    
+    .color-picker-content {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .color-input-wrapper {
+        justify-content: center;
+    }
+    
+    .color-picker-input {
+        width: 60px;
+        height: 60px;
+        border-width: 2px;
+    }
+    
+    .color-info-inputs {
+        flex-direction: column;
+        gap: 12px;
+        min-width: auto;
+    }
+    
+    .hex-input {
+        width: 100%;
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .compare-button {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .color-picker-info {
+        font-size: 0.8rem;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .color-picker-wrapper {
+        padding: 22px 20px;
+    }
+    
+    .color-picker-input {
+        width: 65px;
+        height: 65px;
+    }
+    
+    .hex-input {
+        width: 110px;
+        font-size: 0.85rem;
+    }
+    
+    .compare-button {
+        padding: 11px 18px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .color-picker-container {
+        margin-bottom: 45px;
+    }
+    
+    .color-picker-wrapper {
+        padding: 28px 30px;
+    }
+    
+    .color-picker-title {
+        font-size: 1.15rem;
+        margin-bottom: 22px;
+    }
+    
+    .color-picker-content {
+        gap: 25px;
+    }
+    
+    .color-picker-input {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .hex-input {
+        width: 130px;
+        font-size: 0.95rem;
+        padding: 13px 16px;
+    }
+    
+    .compare-button {
+        padding: 13px 22px;
+        font-size: 0.95rem;
+    }
+    
+    .color-picker-info {
+        font-size: 0.95rem;
+    }
+}
+
+.hex-input:invalid {
+    border-color: rgba(220, 38, 38, 0.8);
+    background: rgba(220, 38, 38, 0.1);
+}
