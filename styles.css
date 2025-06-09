@@ -34,12 +34,12 @@ body::before {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 20px 15px;
 }
 
 header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     animation: fadeIn 1s ease-out;
 }
 
@@ -49,7 +49,7 @@ header {
 }
 
 h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-size: 2rem;
     font-weight: 300;
     letter-spacing: -0.02em;
     margin-bottom: 10px;
@@ -57,30 +57,36 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1.2;
 }
 
 .subtitle {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #9ca3af;
     font-weight: 300;
+    padding: 0 10px;
 }
 
 .color-selector {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-bottom: 50px;
+    gap: 10px;
+    margin-bottom: 30px;
     flex-wrap: wrap;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 10px 0;
 }
 
 .color-option {
-    width: 60px;
-    height: 60px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
 }
 
 .color-option:hover {
@@ -96,10 +102,10 @@ h1 {
 .color-option::after {
     content: attr(data-name);
     position: absolute;
-    bottom: -25px;
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     opacity: 0;
     transition: opacity 0.3s;
     white-space: nowrap;
@@ -112,12 +118,13 @@ h1 {
 
 .visualization {
     width: 100%;
-    height: 500px;
+    height: 300px;
     position: relative;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     background: radial-gradient(ellipse at center, rgba(220, 38, 38, 0.05) 0%, transparent 70%);
     border-radius: 20px;
     overflow: hidden;
+    padding: 20px 10px;
 }
 
 .distance-line {
@@ -125,17 +132,17 @@ h1 {
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     top: 50%;
-    left: 50px;
-    right: 50px;
+    left: 30px;
+    right: 30px;
     transform: translateY(-50%);
 }
 
 .origin-point {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    left: 50px;
+    left: 30px;
     top: 50%;
     transform: translateY(-50%);
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
@@ -150,8 +157,8 @@ h1 {
 
 .color-node {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     top: 50%;
     transform: translateY(-50%);
@@ -192,9 +199,9 @@ h1 {
     position: absolute;
     background: rgba(0, 0, 0, 0.95);
     color: white;
-    padding: 12px 16px;
+    padding: 10px 12px;
     border-radius: 8px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s;
@@ -202,7 +209,7 @@ h1 {
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    max-width: 250px;
+    max-width: 200px;
 }
 
 .tooltip.show {
@@ -211,13 +218,13 @@ h1 {
 
 .tooltip h3 {
     margin: 0 0 5px 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
 }
 
 .tooltip p {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #d1d5db;
     line-height: 1.4;
 }
@@ -225,7 +232,7 @@ h1 {
 .results {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
-    padding: 30px;
+    padding: 20px 15px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     animation: slideUp 0.6s ease-out;
@@ -237,8 +244,8 @@ h1 {
 }
 
 .results h2 {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
     font-weight: 400;
 }
 
@@ -250,8 +257,8 @@ h1 {
 .color-item {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 15px;
+    gap: 15px;
+    padding: 12px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: 12px;
     transition: all 0.3s;
@@ -265,8 +272,8 @@ h1 {
 }
 
 .color-preview {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 8px;
     flex-shrink: 0;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -279,31 +286,400 @@ h1 {
 .color-name {
     font-weight: 500;
     margin-bottom: 3px;
+    font-size: 0.95rem;
 }
 
 .color-distance {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #9ca3af;
 }
 
-.surprise-indicator {
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #dc2626;
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    opacity: 0;
-    animation: bounce 0.6s ease-out forwards;
-    animation-delay: 0.8s;
+/* 스크롤 최적화 */
+.color-selector::-webkit-scrollbar {
+    display: none;
 }
 
-@keyframes bounce {
-    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    50% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
-    100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+.color-selector {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 로딩 상태 */
+.loading .visualization {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.loading .color-selector {
+    opacity: 0.7;
+}
+
+/* 에러 상태 */
+.error .visualization {
+    border: 2px dashed rgba(220, 38, 38, 0.5);
+}
+
+.error .results::before {
+    content: "⚠️ 데이터 로딩 중 오류가 발생했습니다.";
+    display: block;
+    text-align: center;
+    color: #dc2626;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 8px;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* 태블릿 스타일 (768px 이상) */
+@media (min-width: 768px) {
+    .container {
+        padding: 30px 20px;
+    }
+    
+    header {
+        margin-bottom: 50px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.05rem;
+        padding: 0;
+    }
+    
+    .color-selector {
+        gap: 12px;
+        margin-bottom: 40px;
+        overflow-x: visible;
+    }
+    
+    .color-option {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .color-option::after {
+        font-size: 0.75rem;
+        bottom: -22px;
+    }
+    
+    .visualization {
+        height: 400px;
+        margin-bottom: 35px;
+        padding: 30px 20px;
+    }
+    
+    .origin-point {
+        width: 70px;
+        height: 70px;
+        left: 40px;
+    }
+    
+    .distance-line {
+        left: 40px;
+        right: 40px;
+    }
+    
+    .color-node {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .tooltip {
+        max-width: 225px;
+        font-size: 0.85rem;
+        padding: 11px 14px;
+    }
+    
+    .tooltip h3 {
+        font-size: 0.95rem;
+    }
+    
+    .results {
+        padding: 25px 20px;
+    }
+    
+    .results h2 {
+        font-size: 1.4rem;
+        margin-bottom: 18px;
+    }
+    
+    .color-item {
+        padding: 13px 15px;
+        gap: 18px;
+    }
+    
+    .color-preview {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* 데스크탑 스타일 (1024px 이상) */
+@media (min-width: 1024px) {
+    .container {
+        padding: 40px 20px;
+    }
+    
+    header {
+        margin-bottom: 60px;
+    }
+    
+    h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .color-selector {
+        gap: 15px;
+        margin-bottom: 50px;
+    }
+    
+    .color-option {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .color-option::after {
+        font-size: 0.75rem;
+        bottom: -25px;
+    }
+    
+    .visualization {
+        height: 500px;
+        margin-bottom: 40px;
+        padding: 40px;
+    }
+    
+    .origin-point {
+        width: 80px;
+        height: 80px;
+        left: 50px;
+    }
+    
+    .distance-line {
+        left: 50px;
+        right: 50px;
+    }
+    
+    .color-node {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .tooltip {
+        max-width: 250px;
+        font-size: 0.9rem;
+        padding: 12px 16px;
+    }
+    
+    .tooltip h3 {
+        font-size: 1rem;
+    }
+    
+    .results {
+        padding: 30px;
+    }
+    
+    .results h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .color-item {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .color-preview {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* 큰 화면 최적화 (1400px 이상) */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .visualization {
+        height: 550px;
+    }
+    
+    .color-selector {
+        max-width: 800px;
+        margin: 0 auto 50px;
+    }
+}
+
+/* 초고해상도 화면 대응 */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px;
+    }
+    
+    h1 {
+        font-size: 4rem;
+    }
+    
+    .visualization {
+        height: 600px;
+    }
+}
+
+/* 세로 모드 모바일 특별 대응 */
+@media (max-width: 767px) and (orientation: portrait) {
+    .color-selector {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        max-width: 280px;
+        margin: 0 auto 30px;
+    }
+    
+    .visualization {
+        height: 250px;
+        padding: 15px 10px;
+    }
+    
+    .origin-point {
+        width: 50px;
+        height: 50px;
+        left: 20px;
+    }
+    
+    .distance-line {
+        left: 20px;
+        right: 20px;
+    }
+    
+    .color-node {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* 가로 모드 모바일 특별 대응 */
+@media (max-width: 767px) and (orientation: landscape) {
+    .visualization {
+        height: 200px;
+    }
+    
+    .results {
+        padding: 15px;
+    }
+    
+    .color-item {
+        padding: 10px;
+        gap: 12px;
+    }
+}
+
+/* 터치 기기 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .color-option:hover {
+        transform: none;
+    }
+    
+    .color-option:active {
+        transform: scale(0.95);
+    }
+    
+    .color-node:hover {
+        transform: translateY(-50%);
+    }
+    
+    .color-node:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+    
+    .color-item:hover {
+        transform: none;
+        background: rgba(255, 255, 255, 0.02);
+    }
+    
+    .color-item:active {
+        background: rgba(255, 255, 255, 0.08);
+    }
+}
+
+/* 고대비 모드 및 접근성 */
+@media (prefers-contrast: high) {
+    .color-option {
+        border: 2px solid #ffffff;
+    }
+    
+    .color-node {
+        border: 1px solid #ffffff;
+    }
+    
+    .tooltip {
+        background: rgba(0, 0, 0, 0.98);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* 모션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    body::before {
+        animation: none;
+    }
+    
+    .origin-point {
+        animation: none;
+    }
+}
+
+/* 포커스 표시 (키보드 네비게이션) */
+.color-option:focus,
+.color-node:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.color-option:focus-visible,
+.color-node:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+}
+
+/* 프린트 스타일 */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    body::before {
+        display: none;
+    }
+    
+    .visualization {
+        border: 1px solid #ccc;
+        background: white;
+    }
+    
+    .tooltip {
+        display: none;
+    }
+    
+    .color-option,
+    .color-node,
+    .color-preview {
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+    }
 }
