@@ -402,7 +402,8 @@ function updateVisualizationResponsive(selected) {
 }
 
 function showTooltip(e, color) {
-    const rect = e.target.getBoundingClientRect();
+    const node = e.target;
+    const tooltip = document.getElementById('tooltip');
 
     // 거리 구간 분류
     const maxDistance = Math.max(...colors.filter(c => c.hex !== selectedColor.hex)
@@ -426,24 +427,15 @@ function showTooltip(e, color) {
         ${categoryInfo}
     `;
 
-    const tooltipWidth = 250;
-    const tooltipHeight = tooltip.offsetHeight || 80;
-    const viewportWidth = window.innerWidth;
+    // 노드 기준 상대 위치 설정
+    const offsetLeft = node.offsetLeft;
+    const offsetTop = node.offsetTop;
+    const nodeHeight = node.offsetHeight;
 
-    // ✨ 좌측 정렬, 아래쪽 위치
-    let left = rect.left;
-    let top = rect.bottom + 8;
-
-    // 화면 오른쪽을 넘지 않도록 보정
-    if (left + tooltipWidth > viewportWidth - 10) {
-        left = viewportWidth - tooltipWidth - 10;
-    }
-
-    tooltip.style.left = `${left}px`;
-    tooltip.style.top = `${top}px`;
-    tooltip.style.transform = 'none';  // transform 제거
+    tooltip.style.left = `${offsetLeft}px`;
+    tooltip.style.top = `${offsetTop + nodeHeight + 8}px`; // 아래로 8px
+    tooltip.style.transform = 'none';
     tooltip.classList.add('show');
-
 }
 
 
