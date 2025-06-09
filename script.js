@@ -401,16 +401,15 @@ function updateVisualizationResponsive(selected) {
     console.log('✅ 시각화 업데이트 완료');
 }
 
-// 향상된 툴팁 표시 (구간 정보 포함)
 function showTooltip(e, color) {
     const rect = e.target.getBoundingClientRect();
-    
-    // 구간 분류 정보 가져오기
+
+    // 거리 구간 분류
     const maxDistance = Math.max(...colors.filter(c => c.hex !== selectedColor.hex)
         .map(c => colorDistance(selectedColor.hex, c.hex)));
     const closeThreshold = maxDistance / 3;
     const mediumThreshold = (maxDistance * 2) / 3;
-    
+
     let categoryInfo = '';
     if (color.distance <= closeThreshold) {
         categoryInfo = '<div class="distance-category close">🟢 가까운 색상</div>';
@@ -419,38 +418,34 @@ function showTooltip(e, color) {
     } else {
         categoryInfo = '<div class="distance-category far">🔴 먼 색상</div>';
     }
-    
+
     tooltip.innerHTML = `
         <h3>${color.name}</h3>
         <p>${color.description}</p>
         <p style="margin-top: 5px; font-size: 0.8rem;">거리: ${color.distance.toFixed(2)}</p>
         ${categoryInfo}
     `;
-    
-    // 툴팁 위치 조정 (화면 밖으로 나가지 않도록)
-    const tooltipWidth = 250; // 최대 너비
+
+    const tooltipWidth = 250;
+    const tooltipHeight = tooltip.offsetHeight || 80;
     const viewportWidth = window.innerWidth;
-    const targetCenterX = rect.left + rect.width / 2;
-    
-    let leftPosition = targetCenterX;
-    let transform = 'translate(-50%, -100%)';
-    
-    // 화면 왼쪽 끝에 너무 가까우면
-    if (targetCenterX - tooltipWidth / 2 < 10) {
-        leftPosition = 10;
-        transform = 'translate(0, -100%)';
+
+    // ✨ 좌측 정렬, 아래쪽 위치
+    let left = rect.left;
+    let top = rect.bottom + 8;
+
+    // 화면 오른쪽을 넘지 않도록 보정
+    if (left + tooltipWidth > viewportWidth - 10) {
+        left = viewportWidth - tooltipWidth - 10;
     }
-    // 화면 오른쪽 끝에 너무 가까우면
-    else if (targetCenterX + tooltipWidth / 2 > viewportWidth - 10) {
-        leftPosition = viewportWidth - 10;
-        transform = 'translate(-100%, -100%)';
-    }
-    
-    tooltip.style.left = leftPosition + 'px';
-    tooltip.style.top = rect.top - 10 + 'px';
-    tooltip.style.transform = transform;
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+    tooltip.style.transform = 'none';  // transform 제거
     tooltip.classList.add('show');
+
 }
+
 
 // 툴팁 숨기기
 function hideTooltip() {

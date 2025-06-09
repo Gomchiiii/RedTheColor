@@ -49,6 +49,7 @@ header {
 }
 
 h1 {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 2rem;
     font-weight: 300;
     letter-spacing: -0.02em;
@@ -1055,7 +1056,7 @@ h1 {
 /* styles.css에 추가할 색상 피커 스타일 */
 
 /* 색상 피커 컨테이너 */
-/* 색상 피커 컨테이너 */
+
 .color-picker-container {
     max-width: 600px;
     margin: 0 auto 40px;
