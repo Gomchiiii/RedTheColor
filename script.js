@@ -2,6 +2,8 @@
 let colors = [];
 let selectedColor = null;
 const tooltip = document.getElementById('tooltip');
+let allColors = []; // 전체 색상 데이터 저장
+let filteredColors = []; // 필터링된 색상 데이터
 
 // 기본 색상 데이터 (CSV 로딩 실패시 폴백)
 function getDefaultColors() {
@@ -483,9 +485,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // CSV에서 색상 데이터 로드
         colors = await loadColorsFromCSV('./data/colors.csv');
+        allColors = [...colors]; // 전체 데이터 백업
+        filteredColors = [...colors]; // 초기에는 모든 색상 표시
+        
+        // 검색 기능 초기화
+        initializeSearch();
         
         // 색상 선택기 업데이트
-        updateColorSelector(colors);
+        updateColorSelector(filteredColors);
         
         // 반응형 설정
         setupResponsiveLayout();
@@ -502,7 +509,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         
         // 첫 번째 색상으로 초기화
-        if (colors.length > 0) {
+        if (filteredColors.length > 0) {
             const firstOption = document.querySelector('.color-option');
             if (firstOption) {
                 firstOption.click();
@@ -518,3 +525,146 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.classList.add('error');
     }
 });
+
+// 검색 기능 초기화
+function initializeSearch() {
+    const container = document.querySelector('.container');
+    const header = container.querySelector('header');
+    const colorSelector = container.querySelector('.color-selector');
+    
+    // 검색 컨테이너 생성
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    searchContainer.innerHTML = `
+        <div class="search-wrapper">
+            <input type="text" 
+                   id="colorSearch" 
+                   class="search-input" 
+                   placeholder="색상, 브랜드, 국가 또는 컨텍스트로 검색..."
+                   autocomplete="off">
+            <div class="search-icon">🔍</div>
+            <button class="search-clear" id="searchClear" style="display: none;">✕</button>
+        </div>
+        <div class="search-results-info" id="searchInfo">
+            총 ${allColors.length}개 색상
+        </div>
+    `;
+    
+    // 헤더와 색상 선택기 사이에 삽입
+    container.insertBefore(searchContainer, colorSelector);
+    
+    // 검색 이벤트 리스너
+    const searchInput = document.getElementById('colorSearch');
+    const clearButton = document.getElementById('searchClear');
+    const searchInfo = document.getElementById('searchInfo');
+    
+    // 실시간 검색 (디바운싱 적용)
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        const query = e.target.value.trim();
+        
+        // 클리어 버튼 표시/숨김
+        clearButton.style.display = query ? 'flex' : 'none';
+        
+        searchTimeout = setTimeout(() => {
+            performSearch(query);
+        }, 300); // 300ms 디바운싱
+    });
+    
+    // 클리어 버튼 이벤트
+    clearButton.addEventListener('click', () => {
+        searchInput.value = '';
+        clearButton.style.display = 'none';
+        performSearch('');
+        searchInput.focus();
+    });
+    
+    // Enter 키 검색
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            performSearch(searchInput.value.trim());
+        }
+    });
+}
+
+// 검색 수행
+function performSearch(query) {
+    const searchInfo = document.getElementById('searchInfo');
+    
+    if (!query) {
+        // 검색어가 없으면 모든 색상 표시
+        filteredColors = [...allColors];
+        colors = filteredColors;
+        searchInfo.textContent = `총 ${allColors.length}개 색상`;
+    } else {
+        // 검색 실행
+        filteredColors = searchColors(query);
+        colors = filteredColors;
+        
+        if (filteredColors.length === 0) {
+            searchInfo.innerHTML = `"${query}"에 대한 검색 결과가 없습니다`;
+        } else {
+            searchInfo.innerHTML = `"${query}" 검색 결과: ${filteredColors.length}개 색상`;
+        }
+    }
+    
+    // 색상 선택기 업데이트
+    updateColorSelector(filteredColors);
+    
+    // 첫 번째 색상으로 시각화 업데이트 (있는 경우)
+    if (filteredColors.length > 0) {
+        const firstColor = filteredColors[0];
+        selectedColor = firstColor;
+        
+        // 첫 번째 옵션 선택 상태로 만들기
+        setTimeout(() => {
+            const firstOption = document.querySelector('.color-option');
+            if (firstOption) {
+                document.querySelectorAll('.color-option').forEach(opt => 
+                    opt.classList.remove('selected')
+                );
+                firstOption.classList.add('selected');
+                updateVisualizationResponsive(firstColor);
+            }
+        }, 100);
+    } else {
+        // 검색 결과가 없으면 시각화 초기화
+        const visualization = document.querySelector('.visualization');
+        const colorNodes = document.getElementById('colorNodes');
+        const closestColors = document.getElementById('closestColors');
+        
+        if (colorNodes) colorNodes.innerHTML = '';
+        if (closestColors) closestColors.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
+        
+        // 세로 구간선도 제거
+        const existingIndicators = visualization.querySelectorAll('.vertical-indicator');
+        existingIndicators.forEach(indicator => indicator.remove());
+    }
+}
+
+// 색상 검색 함수
+function searchColors(query) {
+    const lowerQuery = query.toLowerCase();
+    
+    return allColors.filter(color => {
+        return (
+            color.name.toLowerCase().includes(lowerQuery) ||
+            color.description.toLowerCase().includes(lowerQuery) ||
+            color.context.toLowerCase().includes(lowerQuery) ||
+            color.category.toLowerCase().includes(lowerQuery) ||
+            (color.country && color.country.toLowerCase().includes(lowerQuery)) ||
+            (color.year && color.year.toString().includes(lowerQuery)) ||
+            color.hex.toLowerCase().includes(lowerQuery)
+        );
+    });
+}
+
+// 검색 하이라이트 함수 (선택사항)
+function highlightSearchTerm(text, query) {
+    if (!query) return text;
+    
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}

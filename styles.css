@@ -835,3 +835,219 @@ h1 {
     align-items: center;
     gap: 3px;
 }
+
+/* styles.css에 추가할 검색 기능 스타일 */
+
+/* 검색 컨테이너 */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    animation: fadeIn 1s ease-out 0.3s both;
+}
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.search-wrapper:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.search-wrapper:focus-within {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(220, 38, 38, 0.5);
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2), 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 15px 20px 15px 50px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: inherit;
+    placeholder-color: rgba(255, 255, 255, 0.5);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 300;
+}
+
+.search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+.search-wrapper:focus-within .search-icon {
+    color: rgba(220, 38, 38, 0.8);
+}
+
+.search-clear {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.search-clear:hover {
+    background: rgba(220, 38, 38, 0.8);
+    color: #ffffff;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-results-info {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+}
+
+.search-results-info mark {
+    background: rgba(220, 38, 38, 0.3);
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* 검색 결과 없음 스타일 */
+.no-results {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 20px;
+}
+
+/* 반응형 검색 스타일 */
+@media (max-width: 767px) {
+    .search-container {
+        max-width: 100%;
+        margin: 0 auto 30px;
+        padding: 0 10px;
+    }
+    
+    .search-input {
+        padding: 12px 15px 12px 45px;
+        font-size: 0.9rem;
+    }
+    
+    .search-input::placeholder {
+        font-size: 0.9rem;
+    }
+    
+    .search-icon {
+        left: 15px;
+        font-size: 1rem;
+    }
+    
+    .search-clear {
+        right: 12px;
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+    }
+    
+    .search-results-info {
+        font-size: 0.8rem;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .search-container {
+        margin-bottom: 45px;
+    }
+    
+    .search-input {
+        font-size: 1.05rem;
+        padding: 16px 22px 16px 52px;
+    }
+    
+    .search-icon {
+        left: 20px;
+        font-size: 1.15rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .search-container {
+        margin-bottom: 50px;
+    }
+    
+    .search-input {
+        font-size: 1.1rem;
+        padding: 18px 25px 18px 55px;
+    }
+    
+    .search-results-info {
+        font-size: 1rem;
+    }
+}
+
+/* 키보드 접근성 */
+.search-input:focus {
+    outline: none;
+}
+
+.search-clear:focus {
+    outline: 2px solid rgba(220, 38, 38, 0.6);
+    outline-offset: 2px;
+}
+
+/* 검색 애니메이션 */
+@keyframes searchPulse {
+    0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.search-wrapper.searching {
+    animation: searchPulse 1.5s infinite;
+}
+
+/* 다크모드 최적화 */
+@media (prefers-color-scheme: dark) {
+    .search-wrapper {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    .search-wrapper:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    
+    .search-wrapper:focus-within {
+        background: rgba(255, 255, 255, 0.08);
+    }
+}
