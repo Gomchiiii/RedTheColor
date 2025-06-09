@@ -215,6 +215,10 @@ function updateVisualizationResponsive(selected) {
     const closestColors = document.getElementById('closestColors');
     const visualization = document.querySelector('.visualization');
     
+    console.log('🔍 디버깅: updateVisualizationResponsive 호출됨');
+    console.log('선택된 색상:', selected);
+    console.log('전체 colors 배열 길이:', colors.length);
+    
     // 가로줄이 있는지 확인하고 없으면 생성
     let horizontalLine = visualization.querySelector('.horizontal-line');
     if (!horizontalLine) {
@@ -259,11 +263,23 @@ function updateVisualizationResponsive(selected) {
     originPoint.style.backgroundColor = selected.hex;
     colorNodes.innerHTML = '';
     
+    // 🔧 전체 색상 데이터에서 선택된 색상을 제외하고 거리 계산
     const otherColors = colors.filter(c => c.hex !== selected.hex);
+    console.log('비교할 다른 색상들:', otherColors.length);
+    
+    if (otherColors.length === 0) {
+        console.log('❌ 비교할 색상이 없습니다');
+        closestColors.innerHTML = '<div class="no-results">비교할 다른 색상이 없습니다</div>';
+        return;
+    }
+    
     const distances = otherColors.map(color => ({
         ...color,
         distance: colorDistance(selected.hex, color.hex)
     })).sort((a, b) => a.distance - b.distance);
+    
+    console.log('거리 계산 완료:', distances.length, '개');
+    console.log('가장 가까운 3개:', distances.slice(0, 3).map(d => `${d.name}: ${d.distance.toFixed(2)}`));
     
     const configs = {
         mobile: { 
@@ -292,6 +308,7 @@ function updateVisualizationResponsive(selected) {
     createDistanceIndicators(distances, breakpoint, config);
     
     const displayColors = distances.slice(0, config.maxNodes);
+    console.log('표시할 색상 노드:', displayColors.length, '개');
     
     // 색상별 구간 분류
     const classified = classifyColorsByDistance(distances);
@@ -351,6 +368,8 @@ function updateVisualizationResponsive(selected) {
     
     // 결과 목록 업데이트 (구간별 색상 코딩 포함)
     const displayCount = breakpoint === 'mobile' ? 3 : 5;
+    console.log('결과 목록 업데이트:', displayCount, '개 표시');
+    
     closestColors.innerHTML = distances.slice(0, displayCount).map((color, index) => {
         let categoryIcon = '';
         let categoryColor = '#9ca3af';
@@ -378,6 +397,8 @@ function updateVisualizationResponsive(selected) {
             </div>
         `;
     }).join('');
+    
+    console.log('✅ 시각화 업데이트 완료');
 }
 
 // 향상된 툴팁 표시 (구간 정보 포함)
@@ -596,12 +617,13 @@ function performSearch(query) {
     if (!query) {
         // 검색어가 없으면 모든 색상 표시
         filteredColors = [...allColors];
-        colors = filteredColors;
+        colors = filteredColors; // 시각화에서 사용할 전체 데이터
         searchInfo.textContent = `총 ${allColors.length}개 색상`;
     } else {
         // 검색 실행
         filteredColors = searchColors(query);
-        colors = filteredColors;
+        // 🔧 중요: 시각화용 colors는 여전히 전체 데이터를 사용
+        colors = [...allColors]; // 거리 계산을 위해 전체 데이터 유지
         
         if (filteredColors.length === 0) {
             searchInfo.innerHTML = `"${query}"에 대한 검색 결과가 없습니다`;
@@ -631,16 +653,29 @@ function performSearch(query) {
         }, 100);
     } else {
         // 검색 결과가 없으면 시각화 초기화
-        const visualization = document.querySelector('.visualization');
-        const colorNodes = document.getElementById('colorNodes');
-        const closestColors = document.getElementById('closestColors');
-        
-        if (colorNodes) colorNodes.innerHTML = '';
-        if (closestColors) closestColors.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
-        
-        // 세로 구간선도 제거
-        const existingIndicators = visualization.querySelectorAll('.vertical-indicator');
-        existingIndicators.forEach(indicator => indicator.remove());
+        clearVisualization();
+    }
+}
+
+// 시각화 초기화 함수 추가
+function clearVisualization() {
+    const visualization = document.querySelector('.visualization');
+    const colorNodes = document.getElementById('colorNodes');
+    const closestColors = document.getElementById('closestColors');
+    
+    if (colorNodes) colorNodes.innerHTML = '';
+    if (closestColors) {
+        closestColors.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
+    }
+    
+    // 세로 구간선도 제거
+    const existingIndicators = visualization.querySelectorAll('.vertical-indicator');
+    existingIndicators.forEach(indicator => indicator.remove());
+    
+    // 원점 초기화
+    const originPoint = document.getElementById('originPoint');
+    if (originPoint) {
+        originPoint.style.backgroundColor = '#666666';
     }
 }
 
