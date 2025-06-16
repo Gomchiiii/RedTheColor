@@ -156,6 +156,51 @@ h1 {
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.2);
     animation: originPulse 2s ease-in-out infinite;
     z-index: 10;
+    border: none; /* 기본값, JavaScript에서 동적으로 설정 */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.origin-point.selected {
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+        0 0 40px rgba(0, 0, 0, 0.5), 
+        inset 0 0 20px rgba(255, 255, 255, 0.2),
+        0 0 0 6px rgba(255, 255, 255, 0.1);
+}
+
+.origin-info {
+    pointer-events: none;
+    user-select: none;
+}
+
+/* 원점 이름 스타일 */
+.origin-name {
+    letter-spacing: 0.02em;
+    text-transform: none;
+    backdrop-filter: blur(4px);
+}
+
+/* 원점 설명 스타일 */
+.origin-description {
+    backdrop-filter: blur(2px);
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+/* 원점 정보 등장 애니메이션 */
+@keyframes originInfoAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(15px) scale(0.9);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-3px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 @keyframes originPulse {
@@ -572,6 +617,20 @@ h1 {
         width: 30px;
         height: 30px;
     }
+
+    .origin-info {
+        max-width: 200px !important;
+    }
+    
+    .origin-name {
+        font-size: 0.75rem !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .origin-description {
+        font-size: 0.65rem !important;
+        line-height: 1.3 !important;
+    }
 }
 
 /* 가로 모드 모바일 특별 대응 */
@@ -632,6 +691,16 @@ h1 {
         background: rgba(0, 0, 0, 0.98);
         border: 2px solid rgba(255, 255, 255, 0.3);
     }
+
+        .origin-name,
+    .origin-description {
+        text-shadow: 0 0 8px rgba(0, 0, 0, 1) !important;
+        backdrop-filter: blur(8px) !important;
+    }
+    
+    .origin-name {
+        font-weight: 800 !important;
+    }
 }
 
 /* 모션 감소 설정 */
@@ -648,6 +717,10 @@ h1 {
     
     .origin-point {
         animation: none;
+    }
+
+    .origin-info {
+        animation: none !important;
     }
 }
 
@@ -1298,6 +1371,20 @@ S
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
+    .origin-info {
+        max-width: 250px !important;
+    }
+    
+    .origin-name {
+        font-size: 0.85rem !important;
+        margin-bottom: 5px !important;
+    }
+    
+    .origin-description {
+        font-size: 0.75rem !important;
+        line-height: 1.35 !important;
+    }
+
     .color-picker-wrapper {
         padding: 22px 20px;
     }
@@ -1319,6 +1406,20 @@ S
 }
 
 @media (min-width: 1024px) {
+    .origin-info {
+        max-width: 300px !important;
+    }
+    
+    .origin-name {
+        font-size: 0.9rem !important;
+        margin-bottom: 6px !important;
+    }
+    
+    .origin-description {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+    }
+
     .color-picker-container {
         margin-bottom: 45px;
     }

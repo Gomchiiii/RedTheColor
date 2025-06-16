@@ -5,17 +5,73 @@ const tooltip = document.getElementById('tooltip');
 let allColors = []; // 전체 색상 데이터 저장
 let filteredColors = []; // 필터링된 색상 데이터
 
-// 기본 색상 데이터 (CSV 로딩 실패시 폴백)
+// 기본 색상 데이터 (CSV 로딩 실패시 폴백) - maindescription 추가
 function getDefaultColors() {
     return [
-        { name: '코카콜라', hex: '#ED1C16', description: '세계에서 가장 인지도 높은 브랜드의 상징색', context: '자본주의의 아이콘', category: 'brand' },
-        { name: '소비에트 연방', hex: '#CD0000', description: '구 소련의 국기에 사용된 붉은색', context: '공산주의의 상징', category: 'political' },
-        { name: '맥도날드', hex: '#DA291C', description: '패스트푸드 문화의 대표 브랜드', context: '미국식 소비문화', category: 'brand' },
-        { name: '중국 공산당', hex: '#DE2910', description: '중화인민공화국 국기의 붉은색', context: '현대 공산주의', category: 'political' },
-        { name: 'YouTube', hex: '#FF0000', description: '디지털 시대의 붉은 재생 버튼', context: '플랫폼 자본주의', category: 'brand' },
-        { name: '북한', hex: '#ED1C27', description: '조선민주주의인민공화국의 국기색', context: '주체사상', category: 'political' },
-        { name: 'Target', hex: '#CC0000', description: '미국 대형 유통업체의 브랜드 컬러', context: '대량 소비사회', category: 'brand' },
-        { name: 'Netflix', hex: '#E50914', description: '스트리밍 시대의 대표 브랜드', context: '구독 경제', category: 'brand' }
+        { 
+            name: '코카콜라', 
+            hex: '#ED1C16', 
+            description: '세계에서 가장 인지도 높은 브랜드의 상징색', 
+            context: '자본주의의 아이콘', 
+            category: 'brand',
+            maindescription: '1886년 애틀랜타 약국에서 시작된 음료가 어떻게 전 세계 자본주의의 상징이 되었을까? 이 빨간색은 냉전 시대 "자유 세계"의 맛을 대변했고, 오늘날에도 글로벌 소비문화의 아이콘으로 군림한다.'
+        },
+        { 
+            name: '소비에트 연방', 
+            hex: '#CD0000', 
+            description: '구 소련의 국기에 사용된 붉은색', 
+            context: '공산주의의 상징', 
+            category: 'political',
+            maindescription: '노동자의 피와 혁명의 열정을 상징했던 이 붉은색은 20세기 절반을 지배했다. 1991년 소련 붕괴와 함께 사라졌지만, 여전히 사회주의 이상과 계급투쟁의 기억을 불러일으킨다.'
+        },
+        { 
+            name: '맥도날드', 
+            hex: '#DA291C', 
+            description: '패스트푸드 문화의 대표 브랜드', 
+            context: '미국식 소비문화', 
+            category: 'brand',
+            maindescription: '노란 아치와 함께 전 세계 어디서나 만날 수 있는 이 빨간색. 1955년 첫 프랜차이즈 이후 "맥도날드화"라는 사회학 용어까지 만들어낸 표준화된 소비의 상징이 되었다.'
+        },
+        { 
+            name: '중국 공산당', 
+            hex: '#DE2910', 
+            description: '중화인민공화국 국기의 붉은색', 
+            context: '현대 공산주의', 
+            category: 'political',
+            maindescription: '마오쩌둥의 혁명부터 시진핑의 중국몽까지, 이 붉은색은 14억 인구의 꿈과 야망을 담아왔다. 오늘날 세계 2위 경제대국의 권력을 상징하며 새로운 형태의 사회주의를 대변한다.'
+        },
+        { 
+            name: 'YouTube', 
+            hex: '#FF0000', 
+            description: '디지털 시대의 붉은 재생 버튼', 
+            context: '플랫폼 자본주의', 
+            category: 'brand',
+            maindescription: '재생 버튼 하나로 전 세계 영상 문화를 바꾼 이 빨간색. 누구나 크리에이터가 될 수 있다는 꿈을 팔면서도 거대 플랫폼이 개인의 콘텐츠로 수익을 창출하는 새로운 자본주의 모델을 만들었다.'
+        },
+        { 
+            name: '북한', 
+            hex: '#ED1C27', 
+            description: '조선민주주의인민공화국의 국기색', 
+            context: '주체사상', 
+            category: 'political',
+            maindescription: '세계에서 가장 폐쇄적인 국가의 상징색. 김일성 일가 3대에 걸친 세습 체제와 주체사상을 대변하며, 분단된 한반도의 아픔과 이데올로기 대립의 현실을 보여준다.'
+        },
+        { 
+            name: 'Target', 
+            hex: '#CC0000', 
+            description: '미국 대형 유통업체의 브랜드 컬러', 
+            context: '대량 소비사회', 
+            category: 'brand',
+            maindescription: '"싸지만 세련된" 소비의 민주화를 이끈 이 빨간색. 월마트와 달리 디자인을 무기로 중산층을 공략하며, 대량생산과 합리적 가격으로 "착한 소비"라는 새로운 쇼핑 문화를 만들어냈다.'
+        },
+        { 
+            name: 'Netflix', 
+            hex: '#E50914', 
+            description: '스트리밍 시대의 대표 브랜드', 
+            context: '구독 경제', 
+            category: 'brand',
+            maindescription: 'DVD 대여점에서 시작해 전 세계 영상 산업을 혁신한 이 빨간색. "넷플릭스 앤 칠"이라는 신조어까지 만들며 집에서 즐기는 개인 맞춤형 엔터테인먼트 시대를 열었다.'
+        }
     ];
 }
 
@@ -34,10 +90,12 @@ async function loadColorsFromCSV(csvPath) {
     }
 }
 
-// CSV 파싱 함수
+// CSV 파싱 함수 - maindescription 필드 추가
 function parseCSV(csvText) {
     const lines = csvText.trim().split('\n');
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    
+    console.log('CSV 헤더:', headers); // 디버깅용
     
     const colors = [];
     
@@ -53,15 +111,27 @@ function parseCSV(csvText) {
                 category: values[4] || 'other'
             };
             
+            // 기존 필드들
             if (values[5]) colorObj.year = values[5];
             if (values[6]) colorObj.country = values[6];
             if (values[7]) colorObj.influence = parseFloat(values[7]) || 0;
             if (values[8]) colorObj.recognition = parseFloat(values[8]) || 0;
             
+            // 🆕 새로 추가: maindescription 필드 (9번째 인덱스)
+            if (values[9]) {
+                colorObj.maindescription = values[9];
+            } else {
+                // maindescription이 없으면 기본 description 사용
+                colorObj.maindescription = colorObj.description;
+            }
+            
+            console.log('파싱된 색상:', colorObj.name, '- maindescription 길이:', colorObj.maindescription.length); // 디버깅용
+            
             colors.push(colorObj);
         }
     }
     
+    console.log('총 파싱된 색상 수:', colors.length); // 디버깅용
     return colors;
 }
 
@@ -217,6 +287,7 @@ function updateVisualizationResponsive(selected) {
     
     console.log('🔍 디버깅: updateVisualizationResponsive 호출됨');
     console.log('선택된 색상:', selected);
+    console.log('maindescription:', selected.maindescription); // 🆕 디버깅 추가
     console.log('전체 colors 배열 길이:', colors.length);
     
     // 가로줄이 있는지 확인하고 없으면 생성
@@ -260,7 +331,9 @@ function updateVisualizationResponsive(selected) {
         }
     }
     
-    originPoint.style.backgroundColor = selected.hex;
+    // 🆕 원점 업데이트 (배경색 + 테두리 + 정보 표시)
+    updateOriginPoint(selected, breakpoint);
+    
     colorNodes.innerHTML = '';
     
     // 🔧 전체 색상 데이터에서 선택된 색상을 제외하고 거리 계산
@@ -399,6 +472,84 @@ function updateVisualizationResponsive(selected) {
     }).join('');
     
     console.log('✅ 시각화 업데이트 완료');
+}
+
+// 🆕 원점 업데이트 함수 (새로 추가)
+function updateOriginPoint(selected, breakpoint) {
+    const originPoint = document.getElementById('originPoint');
+    
+    // 배경색 설정
+    originPoint.style.backgroundColor = selected.hex;
+    
+    // 🆕 흰색 테두리 추가
+    originPoint.style.border = '3px solid rgba(255, 255, 255, 0.8)';
+    
+    // 🆕 기존 정보 영역 제거
+    const existingInfo = document.querySelector('.origin-info');
+    if (existingInfo) {
+        existingInfo.remove();
+    }
+    
+    // 🆕 새로운 정보 영역 생성
+    const infoContainer = document.createElement('div');
+    infoContainer.className = 'origin-info';
+    
+    // 반응형 스타일 설정
+    let fontSize, maxWidth, topOffset;
+    if (breakpoint === 'mobile') {
+        fontSize = '0.75rem';
+        maxWidth = '200px';
+        topOffset = '80px';
+    } else if (breakpoint === 'tablet') {
+        fontSize = '0.85rem';
+        maxWidth = '250px';
+        topOffset = '95px';
+    } else {
+        fontSize = '0.9rem';
+        maxWidth = '300px';
+        topOffset = '110px';
+    }
+    
+    infoContainer.style.cssText = `
+        position: absolute;
+        left: ${breakpoint === 'mobile' ? '20px' : breakpoint === 'tablet' ? '40px' : '50px'};
+        top: calc(50% + ${topOffset});
+        max-width: ${maxWidth};
+        z-index: 15;
+        animation: originInfoAppear 0.8s ease-out 0.3s both;
+    `;
+    
+    // 색상 이름 (볼드)
+    const nameElement = document.createElement('div');
+    nameElement.className = 'origin-name';
+    nameElement.textContent = selected.name;
+    nameElement.style.cssText = `
+        font-weight: 700;
+        font-size: ${fontSize};
+        color: #ffffff;
+        margin-bottom: 5px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    `;
+    
+    // 메인 설명
+    const descElement = document.createElement('div');
+    descElement.className = 'origin-description';
+    descElement.textContent = selected.maindescription || selected.description;
+    descElement.style.cssText = `
+        font-size: calc(${fontSize} - 0.1rem);
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.4;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    `;
+    
+    infoContainer.appendChild(nameElement);
+    infoContainer.appendChild(descElement);
+    
+    // visualization 컨테이너에 추가
+    const visualization = document.querySelector('.visualization');
+    visualization.appendChild(infoContainer);
+    
+    console.log('✅ 원점 정보 업데이트 완료:', selected.name);
 }
 
 function showTooltip(e, color) {
@@ -561,6 +712,9 @@ function initializeSearch() {
     // 헤더와 색상 선택기 사이에 삽입
     container.insertBefore(searchContainer, colorSelector);
     
+    // 색상 피커도 함께 초기화
+    initializeColorPicker();
+    
     // 검색 이벤트 리스너
     const searchInput = document.getElementById('colorSearch');
     const clearButton = document.getElementById('searchClear');
@@ -659,14 +813,21 @@ function clearVisualization() {
     const existingIndicators = visualization.querySelectorAll('.vertical-indicator');
     existingIndicators.forEach(indicator => indicator.remove());
     
+    // 🆕 원점 정보도 제거
+    const existingInfo = document.querySelector('.origin-info');
+    if (existingInfo) {
+        existingInfo.remove();
+    }
+    
     // 원점 초기화
     const originPoint = document.getElementById('originPoint');
     if (originPoint) {
         originPoint.style.backgroundColor = '#666666';
+        originPoint.style.border = 'none'; // 🆕 테두리도 제거
     }
 }
 
-// 색상 검색 함수
+// 색상 검색 함수 - 🆕 maindescription 필드도 검색 대상에 추가
 function searchColors(query) {
     const lowerQuery = query.toLowerCase();
     
@@ -678,7 +839,8 @@ function searchColors(query) {
             color.category.toLowerCase().includes(lowerQuery) ||
             (color.country && color.country.toLowerCase().includes(lowerQuery)) ||
             (color.year && color.year.toString().includes(lowerQuery)) ||
-            color.hex.toLowerCase().includes(lowerQuery)
+            color.hex.toLowerCase().includes(lowerQuery) ||
+            (color.maindescription && color.maindescription.toLowerCase().includes(lowerQuery)) // 🆕 추가
         );
     });
 }
@@ -694,8 +856,6 @@ function highlightSearchTerm(text, query) {
 // script.js에 추가할 색상 피커 기능
 
 // 색상 피커 초기화 (검색 기능 초기화 후에 호출)
-// script.js의 initializeColorPicker 함수를 이것으로 교체
-
 function initializeColorPicker() {
     const container = document.querySelector('.container');
     const colorSelector = container.querySelector('.color-selector');
@@ -746,7 +906,7 @@ function setupColorPickerEvents() {
     const colorPicker = document.getElementById('colorPicker');
     const hexInput = document.getElementById('hexInput');
     const compareButton = document.getElementById('compareButton');
-    //const pickerInfo = document.getElementById('pickerInfo');
+    const pickerInfo = document.getElementById('pickerInfo');
     
     // 초기 HEX 값 설정
     hexInput.value = colorPicker.value.toUpperCase();
@@ -755,7 +915,6 @@ function setupColorPickerEvents() {
     colorPicker.addEventListener('input', (e) => {
         const color = e.target.value;
         hexInput.value = color.toUpperCase();
-        //pickerInfo.textContent = `선택된 색상: ${color.toUpperCase()}`;
     });
     
     // HEX 입력 필드 이벤트
@@ -795,24 +954,13 @@ function setupColorPickerEvents() {
     });
 }
 
-// 색상 표시 업데이트
-function updateColorDisplay(color) {
-    const colorDisplay = document.getElementById('colorDisplay');
-    const hexInput = document.getElementById('hexInput');
-    
-    colorDisplay.style.backgroundColor = color;
-    if (!hexInput.matches(':focus')) {
-        hexInput.value = color.toUpperCase();
-    }
-}
-
 // HEX 색상 코드 유효성 검사
 function isValidHex(hex) {
     const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
     return hexRegex.test(hex);
 }
 
-// 사용자 정의 색상과 비교
+// 사용자 정의 색상과 비교 - 🆕 maindescription 추가
 function compareWithCustomColor(hexColor) {
     const pickerInfo = document.getElementById('pickerInfo');
     const compareButton = document.getElementById('compareButton');
@@ -831,13 +979,14 @@ function compareWithCustomColor(hexColor) {
         return;
     }
     
-    // 임시 색상 객체 생성
+    // 임시 색상 객체 생성 - 🆕 maindescription 추가
     const customColor = {
         name: `사용자 색상`,
         hex: hexColor.toUpperCase(),
         description: `RGB(${rgb.r}, ${rgb.g}, ${rgb.b})`,
         context: '사용자 정의',
-        category: 'custom'
+        category: 'custom',
+        maindescription: `사용자가 직접 선택한 색상입니다. RGB 값은 ${rgb.r}, ${rgb.g}, ${rgb.b}이며, 이 색상과 가장 유사한 정치적/상업적 의미를 가진 빨간색들을 비교해보세요.` // 🆕 추가
     };
     
     // 기존 검색 초기화 (선택사항)
@@ -895,66 +1044,4 @@ function resetCompareButton() {
         <span class="button-icon">🔍</span>
         <span class="button-text">이 색상과 비교</span>
     `;
-}
-
-// 기존 initializeSearch 함수 수정 - 색상 피커도 함께 초기화
-function initializeSearch() {
-    const container = document.querySelector('.container');
-    const header = container.querySelector('header');
-    const colorSelector = container.querySelector('.color-selector');
-    
-    // 검색 컨테이너 생성
-    const searchContainer = document.createElement('div');
-    searchContainer.className = 'search-container';
-    searchContainer.innerHTML = `
-        <div class="search-wrapper">
-            <input type="text" 
-                   id="colorSearch" 
-                   class="search-input" 
-                   placeholder="색상, 브랜드, 국가 또는 컨텍스트로 검색..."
-                   autocomplete="off">
-            <div class="search-icon">🔍</div>
-            <button class="search-clear" id="searchClear" style="display: none;">✕</button>
-        </div>
-        <div class="search-results-info" id="searchInfo">
-            총 ${allColors.length}개 색상
-        </div>
-    `;
-    
-    // 헤더와 색상 선택기 사이에 삽입
-    container.insertBefore(searchContainer, colorSelector);
-    
-    // 색상 피커도 함께 초기화
-    initializeColorPicker();
-    
-    // 검색 이벤트 리스너 (기존과 동일)
-    const searchInput = document.getElementById('colorSearch');
-    const clearButton = document.getElementById('searchClear');
-    const searchInfo = document.getElementById('searchInfo');
-    
-    let searchTimeout;
-    searchInput.addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        const query = e.target.value.trim();
-        
-        clearButton.style.display = query ? 'flex' : 'none';
-        
-        searchTimeout = setTimeout(() => {
-            performSearch(query);
-        }, 300);
-    });
-    
-    clearButton.addEventListener('click', () => {
-        searchInput.value = '';
-        clearButton.style.display = 'none';
-        performSearch('');
-        searchInput.focus();
-    });
-    
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            clearTimeout(searchTimeout);
-            performSearch(searchInput.value.trim());
-        }
-    });
 }
