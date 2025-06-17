@@ -61,6 +61,37 @@
         </div>
     </div>
 
+        <div class="modal-overlay" id="colorModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-color-preview" id="modalColorPreview"></div>
+                    <div class="modal-title-section">
+                        <h2 class="modal-color-name" id="modalColorName">색상명</h2>
+                        <p class="modal-color-context" id="modalColorContext">컨텍스트</p>
+                    </div>
+                    <button class="modal-close" id="modalClose" aria-label="모달 닫기">✕</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="modal-description" id="modalDescription">
+                        색상에 대한 자세한 설명이 여기에 표시됩니다.
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button class="modal-action-btn primary" id="modalSearchBtn">
+                            <span class="btn-icon">🔍</span>
+                            <span class="btn-text">이 색상으로 다시 검색하기</span>
+                        </button>
+                        <button class="modal-action-btn secondary" id="modalCloseBtn">
+                            <span class="btn-text">닫기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     <script src="script.js"></script>
+
+
 </body>
 </html>

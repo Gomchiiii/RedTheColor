@@ -658,6 +658,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 반응형 설정
         setupResponsiveLayout();
+
+        // 모달 초기화
+        initializeModal();
         
         // 이벤트 리스너 등록
         window.addEventListener('resize', handleResize);
@@ -1070,4 +1073,111 @@ function initializeIntroSection() {
             introContent.classList.add('active');
         }
     });
+}
+
+// 모달 관련 변수
+let currentModalColor = null;
+
+// 모달 초기화 함수
+function initializeModal() {
+    const modal = document.getElementById('colorModal');
+    const closeBtn = document.getElementById('modalClose');
+    const closeBtnSecondary = document.getElementById('modalCloseBtn');
+    const searchBtn = document.getElementById('modalSearchBtn');
+    
+    // 모달 닫기 이벤트들
+    closeBtn.addEventListener('click', closeModal);
+    closeBtnSecondary.addEventListener('click', closeModal);
+    
+    // 오버레이 클릭시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // ESC 키로 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+    
+    // 검색 버튼 이벤트
+    searchBtn.addEventListener('click', () => {
+        if (currentModalColor) {
+            searchWithModalColor(currentModalColor);
+            closeModal();
+        }
+    });
+}
+
+// 모달 열기 함수
+function openModal(color) {
+    const modal = document.getElementById('colorModal');
+    const colorPreview = document.getElementById('modalColorPreview');
+    const colorName = document.getElementById('modalColorName');
+    const colorContext = document.getElementById('modalColorContext');
+    const description = document.getElementById('modalDescription');
+    
+    // 현재 모달 색상 저장
+    currentModalColor = color;
+    
+    // 모달 내용 업데이트
+    colorPreview.style.backgroundColor = color.hex;
+    colorName.textContent = color.name;
+    colorContext.textContent = color.context;
+    description.textContent = color.maindescription || color.description;
+    
+    // 모달 표시
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+}
+
+// 모달 닫기 함수
+function closeModal() {
+    const modal = document.getElementById('colorModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // 스크롤 복원
+    currentModalColor = null;
+}
+
+// 모달에서 색상으로 검색하기 함수
+function searchWithModalColor(color) {
+    // 검색어 초기화
+    const searchInput = document.getElementById('colorSearch');
+    if (searchInput) {
+        searchInput.value = '';
+        const clearButton = document.getElementById('searchClear');
+        if (clearButton) clearButton.style.display = 'none';
+    }
+    
+    // 전체 색상으로 복원
+    filteredColors = [...allColors];
+    colors = [...allColors];
+    updateColorSelector(filteredColors);
+    
+    // 선택된 색상 설정
+    selectedColor = color;
+    
+    // 색상 선택기에서 해당 색상 선택 상태로 만들기
+    setTimeout(() => {
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.color === color.hex) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // 시각화 업데이트
+        updateVisualizationResponsive(color);
+        
+        // 검색 정보 업데이트
+        const searchInfo = document.getElementById('searchInfo');
+        if (searchInfo) {
+            searchInfo.innerHTML = `<strong>${color.name}</strong> 색상과의 거리 분석 중`;
+        }
+        
+    }, 100);
 }
