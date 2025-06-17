@@ -287,8 +287,15 @@ function updateVisualizationResponsive(selected) {
     
     console.log('🔍 디버깅: updateVisualizationResponsive 호출됨');
     console.log('선택된 색상:', selected);
-    console.log('maindescription:', selected.maindescription); // 🆕 디버깅 추가
+    console.log('maindescription:', selected.maindescription); 
     console.log('전체 colors 배열 길이:', colors.length);
+    console.log('현재 브레이크포인트:', breakpoint); // 🆕 디버깅 추가
+    
+    // 모바일에서는 세로 레이아웃 사용
+    if (breakpoint === 'mobile') {
+        updateVisualizationVertical(selected);
+        return;
+    }
     
     // 가로줄이 있는지 확인하고 없으면 생성
     let horizontalLine = visualization.querySelector('.horizontal-line');
@@ -1180,4 +1187,302 @@ function searchWithModalColor(color) {
         }
         
     }, 100);
+}
+
+// 모바일용 세로 시각화 함수 추가
+function updateVisualizationVertical(selected) {
+    const originPoint = document.getElementById('originPoint');
+    const colorNodes = document.getElementById('colorNodes');
+    const closestColors = document.getElementById('closestColors');
+    const visualization = document.querySelector('.visualization');
+    
+    console.log('📱 모바일 세로 레이아웃 적용');
+    
+    // 기존 가로줄 및 세로 인디케이터 제거
+    const existingLines = visualization.querySelectorAll('.horizontal-line, .vertical-indicator');
+    existingLines.forEach(line => line.remove());
+    
+    // 🆕 세로줄 생성
+    let verticalLine = visualization.querySelector('.vertical-line-mobile');
+    if (!verticalLine) {
+        verticalLine = document.createElement('div');
+        verticalLine.className = 'vertical-line-mobile';
+        verticalLine.style.cssText = `
+            position: absolute;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1), transparent);
+            left: 50%;
+            transform: translateX(-50%);
+            top: 20px;
+            bottom: 20px;
+            z-index: 3;
+        `;
+        visualization.appendChild(verticalLine);
+    }
+    
+    // 원점을 상단 중앙에 배치
+    updateOriginPointVertical(selected);
+    
+    colorNodes.innerHTML = '';
+    
+    // 거리 계산
+    const otherColors = colors.filter(c => c.hex !== selected.hex);
+    if (otherColors.length === 0) {
+        closestColors.innerHTML = '<div class="no-results">비교할 다른 색상이 없습니다</div>';
+        return;
+    }
+    
+    const distances = otherColors.map(color => ({
+        ...color,
+        distance: colorDistance(selected.hex, color.hex)
+    })).sort((a, b) => a.distance - b.distance);
+    
+    // 모바일용 설정
+    const config = {
+        maxNodes: 5,
+        nodeSize: '28px',
+        startPosition: 80, // 원점 아래 시작 위치
+        scale: 1.8 // 세로 간격 조정
+    };
+    
+    // 세로 구간선 생성
+    createVerticalDistanceIndicators(distances, config);
+    
+    const displayColors = distances.slice(0, config.maxNodes);
+    const classified = classifyColorsByDistance(distances);
+    
+    displayColors.forEach((color, index) => {
+        const node = document.createElement('div');
+        node.className = 'color-node mobile-vertical';
+        node.style.backgroundColor = color.hex;
+        node.style.width = config.nodeSize;
+        node.style.height = config.nodeSize;
+        
+        // 세로 위치 계산
+        const maxDistance = 442;
+        const normalizedDistance = (color.distance / maxDistance) * 100;
+        const position = config.startPosition + (normalizedDistance * config.scale);
+        
+        // 화면을 벗어나지 않도록 제한
+        const maxPosition = visualization.offsetHeight - 50;
+        const finalPosition = Math.min(position, maxPosition);
+        
+        // 세로 레이아웃용 위치 설정
+        node.style.left = '50%';
+        node.style.transform = 'translateX(-50%)';
+        node.style.top = `${finalPosition}px`;
+        node.style.animationDelay = `${index * 0.1}s`;
+        
+        node.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
+        
+        // 구간 정보 저장
+        let distanceCategory = 'far';
+        if (classified.close.includes(color)) {
+            distanceCategory = 'close';
+        } else if (classified.medium.includes(color)) {
+            distanceCategory = 'medium';
+        }
+        
+        node.dataset.colorData = JSON.stringify({...color, category: distanceCategory});
+        
+        // 터치 이벤트 (모바일용)
+        node.addEventListener('click', (e) => {
+            const isVisible = tooltip.classList.contains('show');
+            hideTooltip();
+            
+            if (!isVisible) {
+                showTooltipVertical(e, color);
+                setTimeout(hideTooltip, 3000);
+            }
+        });
+        
+        colorNodes.appendChild(node);
+    });
+    
+    // 결과 목록 업데이트 (기존과 동일)
+    const displayCount = 3; // 모바일에서는 3개만
+    closestColors.innerHTML = distances.slice(0, displayCount).map((color, index) => {
+        let categoryIcon = '';
+        let categoryColor = '#9ca3af';
+        
+        if (classified.close.includes(color)) {
+            categoryIcon = '🟢';
+            categoryColor = '#22c55e';
+        } else if (classified.medium.includes(color)) {
+            categoryIcon = '🟡';
+            categoryColor = '#f59e0b';
+        } else {
+            categoryIcon = '🔴';
+            categoryColor = '#ef4444';
+        }
+        
+        return `
+            <div class="color-item" onclick="openModal(${JSON.stringify(color).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+                <div class="color-preview" style="background-color: ${color.hex};"></div>
+                <div class="color-info">
+                    <div class="color-name">${index + 1}. ${color.name}</div>
+                    <div class="color-distance">
+                        <span style="color: ${categoryColor};">${categoryIcon} 거리: ${color.distance.toFixed(2)}</span> | ${color.context}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    console.log('✅ 모바일 세로 시각화 업데이트 완료');
+}
+
+// 🆕 모바일용 원점 업데이트 함수
+function updateOriginPointVertical(selected) {
+    const originPoint = document.getElementById('originPoint');
+    const visualization = document.querySelector('.visualization');
+    
+    // 원점을 상단 중앙에 배치
+    originPoint.style.cssText = `
+        position: absolute;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        left: 50%;
+        top: 20px;
+        transform: translateX(-50%);
+        background-color: ${selected.hex};
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2);
+        z-index: 10;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    `;
+    
+    // 기존 정보 영역 제거
+    const existingInfo = document.querySelector('.origin-info');
+    if (existingInfo) {
+        existingInfo.remove();
+    }
+    
+    // 새로운 정보 영역 생성 (모바일용)
+    const infoContainer = document.createElement('div');
+    infoContainer.className = 'origin-info mobile-vertical';
+    
+    infoContainer.style.cssText = `
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        top: 75px;
+        z-index: 15;
+        text-align: center;
+        animation: originInfoAppear 0.8s ease-out 0.3s both;
+    `;
+    
+    // 색상 이름
+    const nameElement = document.createElement('div');
+    nameElement.className = 'origin-name mobile';
+    nameElement.textContent = selected.name;
+    nameElement.style.cssText = `
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: #ffffff;
+        margin-bottom: 4px;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    `;
+    
+    // 간단한 컨텍스트만 표시 (모바일에서는 공간 절약)
+    const contextElement = document.createElement('div');
+    contextElement.className = 'origin-context mobile';
+    contextElement.textContent = selected.context;
+    contextElement.style.cssText = `
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    `;
+    
+    infoContainer.appendChild(nameElement);
+    infoContainer.appendChild(contextElement);
+    
+    visualization.appendChild(infoContainer);
+    
+    console.log('✅ 모바일 원점 정보 업데이트 완료:', selected.name);
+}
+
+// 🆕 세로 구간선 생성 함수
+function createVerticalDistanceIndicators(distances, config) {
+    const visualization = document.querySelector('.visualization');
+    
+    // 기존 구간선 제거
+    const existingIndicators = visualization.querySelectorAll('.horizontal-indicator-mobile');
+    existingIndicators.forEach(indicator => indicator.remove());
+    
+    if (distances.length === 0) return;
+    
+    const maxDistance = Math.max(...distances.map(d => d.distance));
+    const closeThreshold = maxDistance / 3;
+    const mediumThreshold = (maxDistance * 2) / 3;
+    
+    const indicators = [
+        { distance: closeThreshold, color: '#ffffff', opacity: 0.1 },
+        { distance: mediumThreshold, color: '#ffffff', opacity: 0.1 }
+    ];
+    
+    indicators.forEach((indicator, index) => {
+        const maxDisplayDistance = 442;
+        const normalizedDistance = (indicator.distance / maxDisplayDistance) * 100;
+        const position = config.startPosition + (normalizedDistance * config.scale);
+        
+        const maxPosition = visualization.offsetHeight - 40;
+        const finalPosition = Math.min(position, maxPosition);
+        
+        // 가로선 생성 (세로 레이아웃용)
+        const line = document.createElement('div');
+        line.className = 'horizontal-indicator-mobile';
+        line.style.cssText = `
+            position: absolute !important;
+            top: ${finalPosition}px !important;
+            left: 20% !important;
+            right: 20% !important;
+            height: 1px !important;
+            background: ${indicator.color} !important;
+            opacity: ${indicator.opacity} !important;
+            z-index: 5 !important;
+            animation: indicatorAppear 0.8s ease-out ${index * 0.2}s both !important;
+        `;
+        
+        visualization.appendChild(line);
+    });
+}
+
+// 🆕 모바일용 세로 툴팁 표시 함수
+function showTooltipVertical(e, color) {
+    const node = e.target;
+    const tooltip = document.getElementById('tooltip');
+
+    // 거리 구간 분류
+    const maxDistance = Math.max(...colors.filter(c => c.hex !== selectedColor.hex)
+        .map(c => colorDistance(selectedColor.hex, c.hex)));
+    const closeThreshold = maxDistance / 3;
+    const mediumThreshold = (maxDistance * 2) / 3;
+
+    let categoryInfo = '';
+    if (color.distance <= closeThreshold) {
+        categoryInfo = '<div class="distance-category close">🟢 가까운 색상</div>';
+    } else if (color.distance <= mediumThreshold) {
+        categoryInfo = '<div class="distance-category medium">🟡 보통 거리</div>';
+    } else {
+        categoryInfo = '<div class="distance-category far">🔴 먼 색상</div>';
+    }
+
+    tooltip.innerHTML = `
+        <h3>${color.name}</h3>
+        <p>${color.description}</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">거리: ${color.distance.toFixed(2)}</p>
+        ${categoryInfo}
+    `;
+
+    // 세로 레이아웃용 툴팁 위치 (오른쪽에 표시)
+    const offsetLeft = node.offsetLeft;
+    const offsetTop = node.offsetTop;
+    const nodeWidth = node.offsetWidth;
+
+    tooltip.style.left = `${offsetLeft + nodeWidth + 10}px`; // 오른쪽으로 10px
+    tooltip.style.top = `${offsetTop}px`;
+    tooltip.style.transform = 'none';
+    tooltip.classList.add('show');
 }
