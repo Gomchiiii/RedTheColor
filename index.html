@@ -40,6 +40,101 @@
             </div>
         </div>
 
+        <!-- 거리 계산 설명 섹션 추가 -->
+        <div class="distance-explanation-section" id="distanceExplanationSection">
+            <div class="distance-explanation-container">
+                <button class="distance-explanation-toggle" id="distanceExplanationToggle">
+                    <span class="toggle-icon">🔬</span>
+                    <span class="toggle-text">거리 계산 방법</span>
+                    <span class="toggle-arrow">▼</span>
+                </button>
+                
+                <div class="distance-explanation-content" id="distanceExplanationContent">
+                    <div class="explanation-grid">
+                        <div class="explanation-card">
+                            <div class="explanation-header">
+                                <span class="explanation-icon">📐</span>
+                                <h4>유클리드 거리 공식</h4>
+                            </div>
+                            <div class="explanation-body">
+                                <div class="formula">
+                                    <code>√[(R₁-R₂)² + (G₁-G₂)² + (B₁-B₂)²]</code>
+                                </div>
+                                <p>RGB 색공간에서 두 점 사이의 직선 거리를 계산합니다. 각 색상 채널(Red, Green, Blue)의 차이를 제곱하여 합한 후 제곱근을 구합니다.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="explanation-card">
+                            <div class="explanation-header">
+                                <span class="explanation-icon">🎯</span>
+                                <h4>거리 구간 분류</h4>
+                            </div>
+                            <div class="explanation-body">
+                                <div class="distance-ranges">
+                                    <div class="range-item close">
+                                        <span class="range-dot"></span>
+                                        <span class="range-text">가까운 색상 (0 ~ 33%)</span>
+                                    </div>
+                                    <div class="range-item medium">
+                                        <span class="range-dot"></span>
+                                        <span class="range-text">보통 거리 (34 ~ 66%)</span>
+                                    </div>
+                                    <div class="range-item far">
+                                        <span class="range-dot"></span>
+                                        <span class="range-text">먼 색상 (67 ~ 100%)</span>
+                                    </div>
+                                </div>
+                                <p>최대 거리(442)를 기준으로 3구간으로 나누어 색상 유사도를 직관적으로 표현합니다.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="explanation-card">
+                            <div class="explanation-header">
+                                <span class="explanation-icon">🧪</span>
+                                <h4>실시간 계산 예시</h4>
+                            </div>
+                            <div class="explanation-body">
+                                <div class="calculation-example" id="calculationExample">
+                                    <div class="example-colors">
+                                        <div class="example-color" id="exampleColor1">
+                                            <div class="color-sample" style="background-color: #dc2626;"></div>
+                                            <span class="color-info">빨강 (220, 38, 38)</span>
+                                        </div>
+                                        <div class="calculation-arrow">→</div>
+                                        <div class="example-color" id="exampleColor2">
+                                            <div class="color-sample" style="background-color: #2563eb;"></div>
+                                            <span class="color-info">파랑 (37, 99, 235)</span>
+                                        </div>
+                                    </div>
+                                    <div class="calculation-steps" id="calculationSteps">
+                                        <div class="step">√[(220-37)² + (38-99)² + (38-235)²]</div>
+                                        <div class="step">√[183² + (-61)² + (-197)²]</div>
+                                        <div class="step">√[33489 + 3721 + 38809]</div>
+                                        <div class="step">√76019 = <strong>275.72</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="explanation-card">
+                            <div class="explanation-header">
+                                <span class="explanation-icon">💡</span>
+                                <h4>활용 팁</h4>
+                            </div>
+                            <div class="explanation-body">
+                                <ul class="tips-list">
+                                    <li><strong>디자인</strong>: 거리 30 이하의 색상들은 조화로운 팔레트를 구성합니다</li>
+                                    <li><strong>접근성</strong>: 거리 100 이상의 색상은 명확한 대비를 제공합니다</li>
+                                    <li><strong>브랜딩</strong>: 주 색상에서 거리 50-100 범위가 보조 색상으로 적합합니다</li>
+                                    <li><strong>인쇄</strong>: RGB 거리가 작아도 인쇄 시 다르게 보일 수 있습니다</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 검색 기능이 여기에 동적으로 추가됩니다 -->
 
         <div class="color-selector">
@@ -89,7 +184,7 @@
                 </div>
             </div>
         </div>
-        
+
     <script src="script.js"></script>
 
 

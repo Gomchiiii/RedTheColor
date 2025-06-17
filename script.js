@@ -668,6 +668,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 모달 초기화
         initializeModal();
+
+        // 🆕 거리 계산 설명 초기화 추가
+        initializeDistanceExplanation();
         
         // 이벤트 리스너 등록
         window.addEventListener('resize', handleResize);
@@ -1332,7 +1335,7 @@ function updateVisualizationVertical(selected) {
     console.log('✅ 모바일 세로 시각화 업데이트 완료');
 }
 
-// 🆕 모바일용 원점 업데이트 함수
+// 모바일용 원점 업데이트 함수
 function updateOriginPointVertical(selected) {
     const originPoint = document.getElementById('originPoint');
     const visualization = document.querySelector('.visualization');
@@ -1485,4 +1488,115 @@ function showTooltipVertical(e, color) {
     tooltip.style.top = `${offsetTop}px`;
     tooltip.style.transform = 'none';
     tooltip.classList.add('show');
+}
+
+// 거리 계산 설명 기능 초기화
+function initializeDistanceExplanation() {
+    const toggleBtn = document.getElementById('distanceExplanationToggle');
+    const content = document.getElementById('distanceExplanationContent');
+    
+    if (!toggleBtn || !content) return;
+    
+    toggleBtn.addEventListener('click', () => {
+        const isActive = toggleBtn.classList.contains('active');
+        
+        if (isActive) {
+            // 닫기
+            toggleBtn.classList.remove('active');
+            content.classList.remove('active');
+        } else {
+            // 열기
+            toggleBtn.classList.add('active');
+            content.classList.add('active');
+            
+            // 열릴 때 실시간 계산 예시 업데이트
+            setTimeout(updateCalculationExample, 300);
+        }
+    });
+    
+    console.log('✅ 거리 계산 설명 기능 초기화 완료');
+}
+
+// 실시간 계산 예시 업데이트
+function updateCalculationExample() {
+    if (!selectedColor) return;
+    
+    // 현재 선택된 색상과 비교할 색상 찾기 (가장 가까운 색상)
+    const otherColors = colors.filter(c => c.hex !== selectedColor.hex);
+    if (otherColors.length === 0) return;
+    
+    const distances = otherColors.map(color => ({
+        ...color,
+        distance: colorDistance(selectedColor.hex, color.hex)
+    })).sort((a, b) => a.distance - b.distance);
+    
+    const compareColor = distances[0]; // 가장 가까운 색상
+    
+    // RGB 값 추출
+    const rgb1 = hexToRgb(selectedColor.hex);
+    const rgb2 = hexToRgb(compareColor.hex);
+    
+    if (!rgb1 || !rgb2) return;
+    
+    // 예시 색상 업데이트
+    const color1Element = document.getElementById('exampleColor1');
+    const color2Element = document.getElementById('exampleColor2');
+    const stepsElement = document.getElementById('calculationSteps');
+    
+    if (color1Element && color2Element && stepsElement) {
+        // 색상 샘플 업데이트
+        color1Element.querySelector('.color-sample').style.backgroundColor = selectedColor.hex;
+        color1Element.querySelector('.color-info').textContent = 
+            `${selectedColor.name} (${rgb1.r}, ${rgb1.g}, ${rgb1.b})`;
+        
+        color2Element.querySelector('.color-sample').style.backgroundColor = compareColor.hex;
+        color2Element.querySelector('.color-info').textContent = 
+            `${compareColor.name} (${rgb2.r}, ${rgb2.g}, ${rgb2.b})`;
+        
+        // 계산 단계 업데이트
+        const rDiff = rgb1.r - rgb2.r;
+        const gDiff = rgb1.g - rgb2.g;
+        const bDiff = rgb1.b - rgb2.b;
+        
+        const rSquared = rDiff * rDiff;
+        const gSquared = gDiff * gDiff;
+        const bSquared = bDiff * bDiff;
+        
+        const sum = rSquared + gSquared + bSquared;
+        const distance = Math.sqrt(sum);
+        
+        stepsElement.innerHTML = `
+            <div class="step">√[(${rgb1.r}-${rgb2.r})² + (${rgb1.g}-${rgb2.g})² + (${rgb1.b}-${rgb2.b})²]</div>
+            <div class="step">√[${rDiff}² + ${gDiff}² + ${bDiff}²]</div>
+            <div class="step">√[${rSquared} + ${gSquared} + ${bSquared}]</div>
+            <div class="step">√${sum} = <strong>${distance.toFixed(2)}</strong></div>
+        `;
+    }
+    
+    console.log('✅ 계산 예시 업데이트 완료');
+}
+
+// hex를 RGB로 변환하는 헬퍼 함수
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+// 색상 선택 시 계산 예시도 업데이트
+function selectColor(color) {
+    selectedColor = color;
+    console.log('🎯 색상 선택됨:', color.name);
+    
+    updateVisualizationResponsive(color);
+    updateSelectedColorDisplay(color);
+    
+    // 🆕 설명이 열려있으면 계산 예시 업데이트
+    const content = document.getElementById('distanceExplanationContent');
+    if (content && content.classList.contains('active')) {
+        setTimeout(updateCalculationExample, 100);
+    }
 }
