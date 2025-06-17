@@ -1462,3 +1462,130 @@ S
     border-color: rgba(220, 38, 38, 0.8);
     background: rgba(220, 38, 38, 0.1);
 }
+
+/* 소개 섹션 스타일 */
+.introduction-section {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    animation: fadeIn 1s ease-out 0.2s both;
+}
+
+.intro-toggle {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.intro-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.toggle-text {
+    flex: 1;
+    text-align: left;
+}
+
+.toggle-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.intro-toggle.active .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.intro-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0 0 12px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: none;
+}
+
+.intro-content.active {
+    max-height: 500px;
+    padding: 25px 20px;
+}
+
+.intro-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+}
+
+.intro-item h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.intro-item p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* 반응형 */
+@media (min-width: 768px) {
+    .introduction-section {
+        margin-bottom: 50px;
+    }
+    
+    .intro-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .intro-content.active {
+        padding: 30px 25px;
+    }
+    
+    .intro-item h3 {
+        font-size: 1.05rem;
+    }
+    
+    .intro-item p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .intro-grid {
+        gap: 30px;
+    }
+    
+    .intro-item h3 {
+        font-size: 1rem;
+    }
+    
+    .intro-item p {
+        font-size: 0.8rem;
+    }
+}

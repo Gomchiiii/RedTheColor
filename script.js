@@ -646,6 +646,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         colors = await loadColorsFromCSV('./data/colors.csv');
         allColors = [...colors]; // 전체 데이터 백업
         filteredColors = [...colors]; // 초기에는 모든 색상 표시
+
+        // 소개 섹션 토글 기능 초기화
+        initializeIntroSection();
         
         // 검색 기능 초기화
         initializeSearch();
@@ -684,6 +687,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.classList.add('error');
     }
 });
+
+
 
 // 검색 기능 초기화
 function initializeSearch() {
@@ -1044,4 +1049,25 @@ function resetCompareButton() {
         <span class="button-icon">🔍</span>
         <span class="button-text">이 색상과 비교</span>
     `;
+}
+
+function initializeIntroSection() {
+    const introToggle = document.getElementById('introToggle');
+    const introContent = document.getElementById('introContent');
+    
+    if (!introToggle || !introContent) return;
+    
+    introToggle.addEventListener('click', () => {
+        const isActive = introToggle.classList.contains('active');
+        
+        if (isActive) {
+            // 닫기
+            introToggle.classList.remove('active');
+            introContent.classList.remove('active');
+        } else {
+            // 열기
+            introToggle.classList.add('active');
+            introContent.classList.add('active');
+        }
+    });
 }
