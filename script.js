@@ -331,12 +331,12 @@ function updateVisualizationResponsive(selected) {
         }
     }
     
-    // 🆕 원점 업데이트 (배경색 + 테두리 + 정보 표시)
+    // 원점 업데이트 (배경색 + 테두리 + 정보 표시)
     updateOriginPoint(selected, breakpoint);
     
     colorNodes.innerHTML = '';
     
-    // 🔧 전체 색상 데이터에서 선택된 색상을 제외하고 거리 계산
+    // 전체 색상 데이터에서 선택된 색상을 제외하고 거리 계산
     const otherColors = colors.filter(c => c.hex !== selected.hex);
     console.log('비교할 다른 색상들:', otherColors.length);
     
@@ -459,7 +459,7 @@ function updateVisualizationResponsive(selected) {
         }
         
         return `
-            <div class="color-item">
+            <div class="color-item" onclick="openModal(${JSON.stringify(color).replace(/"/g, '&quot;')})" style="cursor: pointer;">
                 <div class="color-preview" style="background-color: ${color.hex};"></div>
                 <div class="color-info">
                     <div class="color-name">${index + 1}. ${color.name}</div>
